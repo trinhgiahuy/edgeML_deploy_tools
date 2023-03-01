@@ -41,12 +41,20 @@ if __name__ == "__main__":
     cwd = os.getcwd()
     COCO_verify_dir = f"{cwd}/COCO_500_imgs"
     modelDir = f"{cwd}/img_class_{prefix}"
+    output_dir = f"{cwd}/csv_output"
     modelOnnxPathName = os.path.join(modelDir, modelFn + ".onnx")
     logger.info(modelOnnxPathName)
     if not os.path.exists(COCO_verify_dir):
         msg = (
             'Cannot find "COCO_500_imgs" directory.',
             "Please download COCO image dataset first",
+        )
+        raise RuntimeError(msg)
+
+    if not os.path.exists(output_dir):
+        msg = (
+            'Cannot find csv_output" directory.',
+            "Please check extractDrive.py again",
         )
         raise RuntimeError(msg)
 
@@ -73,7 +81,6 @@ if __name__ == "__main__":
 
     logger.info("Finish benchmarking!!")
     timeBenchmarkArr = np.array(timeBenchmarkList)
-    logger.info(timeBenchmarkArr)
     timeBenchamrkSum = timeBenchmarkArr.sum(axis=0)
     preProTime, inferTime, postProTime = (
         timeBenchamrkSum[0],
@@ -85,6 +92,7 @@ if __name__ == "__main__":
     )
 
     csvFileOut = modelFn + "_onnx" + ".csv"
+    output_dir = os.path.join(output_dir, csvFileOut)
     timeBenchmarkDF = pd.DataFrame(timeBenchmarkArr)
-    timeBenchmarkDF.to_csv(csvFileOut, header=False, index=False)
+    timeBenchmarkDF.to_csv(output_dir, header=False, index=False)
     print(f"Finish exporting result to file {csvFileOut}")

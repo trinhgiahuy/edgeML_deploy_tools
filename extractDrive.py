@@ -8,6 +8,7 @@ import gdown
 cwd = os.getcwd()
 COCODir = cwd + "/COCO_500_imgs/"
 COCOExist = os.path.exists(COCODir)
+output_dir = f"{cwd}/csv_output"
 
 
 def downloadCOCO():
@@ -63,7 +64,12 @@ def downloadApplicationsModels(application: str, prefix: str):
 
 
 if __name__ == "__main__":
-    # downloadCOCO()
+    if not os.path.exists(output_dir):
+        logger.warning(f"Directory {output_dir} not found. Creating...")
+        os.mkdir(output_dir)
+
+    downloadCOCO()
+
     application = "img_class"
     prefix = "onnx"
     downloadApplicationsModels(application=application, prefix=prefix)
