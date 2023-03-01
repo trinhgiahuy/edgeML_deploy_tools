@@ -1,36 +1,28 @@
 """
-common.py: common interfaces
+common_cvinfer.py: common interfaces
+
+A modified version from https://github.com/viebboy/cvinfer
 ----------------------------
 
-
-* Copyright: 2022 Dat Tran
-* Authors: Dat Tran
-* Emails: viebboy@gmail.com
-* Date: 2022-06-14
+* Authors: Huy Trinh
+* Emails: giahuy050201@gmail.com
+* Date: 2023-3-1
 * Version: 0.0.1
 
 License
 -------
 Apache License 2.0
-
-
 """
 
 from __future__ import annotations
 import numpy as np
 import os
 from loguru import logger
-import sys
 import onnxruntime as ORT
 import dill
 import cv2
 import numbers
-
-import torch, torchvision
 import torchvision.transforms as T
-from torchvision.models import alexnet, AlexNet_Weights
-
-
 from time import time
 from drawline import draw_rect
 import json
@@ -104,93 +96,6 @@ class Color:
         return "(R={}, G={}, B={})".format(*self.rgb())
 
 
-class OnnxModel:
-    """
-    base implementation of the onnx inference model
-    """
-
-    def __init__(self, onnx_path, execution_provider="CPUExecutionProvider"):
-        # load preprocessing function
-        preprocess_file = onnx_path.replace(".onnx", ".preprocess")
-        assert os.path.exists(preprocess_file)
-        with open(preprocess_file, "rb") as fid:
-            self.preprocess_function = dill.load(fid)
-
-        # similarly, load postprocessing function
-        postprocess_file = onnx_path.replace(".onnx", ".postprocess")
-        assert os.path.exists(postprocess_file)
-        with open(postprocess_file, "rb") as fid:
-            self.postprocess_function = dill.load(fid)
-
-        # load onnx model from onnx_path
-        avail_providers = ORT.get_available_providers()
-        logger.info("all available ExecutionProviders are:")
-        for idx, provider in enumerate(avail_providers):
-            logger.info(f"\t {provider}")
-
-        logger.info(f"trying to run with execution provider: {execution_provider}")
-        self.session = ORT.InferenceSession(
-            onnx_path,
-            providers=[
-                execution_provider,
-            ],
-        )
-
-        self.input_name = self.session.get_inputs()[0].name
-
-        # load config from json file
-        # config_path is a json file
-        config_file = onnx_path.replace(".onnx", ".configuration.json")
-        assert os.path.exists(config_file)
-        with open(config_file, "r") as fid:
-            # self.config is a dictionary
-            self.config = json.loads(fid.read())
-
-    @logger.catch
-    def preprocess(self, frame: Frame):
-        assert isinstance(frame, Frame)
-        return self.preprocess_function(frame, self.config["preprocessing"])
-
-    @logger.catch
-    def postprocess(self, model_output, metadata):
-        return self.postprocess_function(
-            model_output, metadata, self.config["postprocessing"]
-        )
-
-    @logger.catch
-    def __call__(self, frame: Frame):
-        # input must be a frame
-        assert isinstance(frame, Frame)
-
-        # calling preprocess
-        model_input, metadata = self.preprocess_function(
-            frame, self.config["preprocessing"]
-        )
-
-        # compute ONNX Runtime output prediction
-        ort_inputs = {self.input_name: model_input}
-
-        model_output = self.session.run(None, ort_inputs)
-        # e.g., bounding_boxes, confidences = model.forward(inputs)
-        # bounding_boxes shape: (N, 4)
-        # confidences shape: (N,)
-        # --> len(x) = 2
-        # bounding_boxes = x[0]
-        # confidences = x[1]
-
-        # detections = model.forward(image)
-        # detections shape: (N, 5)
-        # len(x) = 1
-
-        # postprocess receives 2 inputs: the output from the model and a
-        # dictionary that contains hyperparameters like thresholding
-        x = self.postprocess_function(
-            model_output, metadata, self.config["postprocessing"]
-        )
-
-        return x
-
-
 class ImgClassOnnxModel:
     """
     base implementation of the onnx inference model for image classification
@@ -222,7 +127,6 @@ class ImgClassOnnxModel:
             logger.info(f"\t {provider}")
 
         logger.info(f"trying to run with execution provider: {execution_provider}")
-        ## TODO: Measure time for loading execution progvider??
         startLoadEngine = time()
         self.session = ORT.InferenceSession(
             onnx_path,
@@ -268,7 +172,7 @@ class ImgClassOnnxModel:
     def postprocess(self, model_output):
         return self.postprocess_function(model_output, self.config["postprocessing"])
 
-    # @logger.catch
+    @logger.catch
     def __call__(self, frame: Frame):
         # input must be a frame
         assert isinstance(frame, Frame)
@@ -294,7 +198,6 @@ class ImgClassOnnxModel:
         postProcessTime = time()
         self.postProcessTime = postProcessTime - inferenceTime
 
-        logger.info(f"{categoryName, score}")
         return categoryName, score
 
 
@@ -304,6 +207,7 @@ class ObjectDetectOnnxModel:
         self.preProcessTime = 0.0
         self.inferenceTime = 0.0
         self.postProcessTime = 0.0
+        self.engineTime = 0.0
 
         # load preprocessing function
         preprocess_file = onnx_path.replace(".onnx", ".preprocess")
@@ -324,14 +228,14 @@ class ObjectDetectOnnxModel:
             logger.info(f"\t {provider}")
 
         logger.info(f"trying to run with execution provider: {execution_provider}")
-        ## TODO: Measure time for loading execution progvider??
+        startLoadEngine = time()
         self.session = ORT.InferenceSession(
             onnx_path,
             providers=[
                 execution_provider,
             ],
         )
-
+        self.engineTime = time() - startLoadEngine
         self.input_name = self.session.get_inputs()[0].name
 
         # load config from json file
@@ -342,7 +246,43 @@ class ObjectDetectOnnxModel:
             # self.config is a dictionary
             self.config = json.loads(fid.read())
 
-        ##TODO: CONTINUE FROM HERE
+    @logger.catch
+    def preprocess(self, frame: Frame):
+        # input must be a frame
+        assert isinstance(frame, Frame)
+        return self.preprocess_function(frame, self.config["preprocessing"])
+
+    @logger.catch
+    def postprocess(self, frame, model_output):
+        return self.postprocess_function(
+            frame, model_output, self.config["postprocessing"]
+        )
+
+    @logger.catch
+    def __call__(self, frame: Frame):
+        # input must be a frame
+        assert isinstance(frame, Frame)
+
+        # calling preprocess
+        start = time()
+        model_input = self.preprocess_function(frame, self.config["preprocessing"])
+        preProcessTime = time()
+        self.preProcessTime = preProcessTime - start
+
+        # compute ONNX Runtime output prediction
+        ort_inputs = {self.input_name: model_input}
+        model_output = self.session.run(None, ort_inputs)
+        inferenceTime = time()
+        self.inferenceTime = inferenceTime - preProcessTime
+
+        # calling postprocess
+        drawingFrameData = self.postprocess_function(
+            model_input, model_output, self.config["postprocessing"]
+        )
+        postProcessTime = time()
+        self.postProcessTime = postProcessTime - inferenceTime
+
+        return drawingFrameData
 
 
 class Frame:
@@ -446,13 +386,7 @@ class Frame:
     # Ref: https://github.com/pytorch/vision/blob/d010e82fec10422f79c69564de7ff2721d93d278/torchvision/transforms/functional.py#L569
     def center_crop(self, output_size: list[int]):
         if isinstance(output_size, numbers.Number):
-            output_size = (int(output_size), int(output_size))
-            print("1")
-        elif isinstance(output_size, (tuple, list)) and len(output_size) == 1:
-            output_size = (output_size[0], output_size[0])
-            print("2")
-
-        print("3")
+            Hôm
         image_height = self.height()
         print(f"Image_height:{image_height}")
         image_width = self.width()
