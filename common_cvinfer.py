@@ -22,7 +22,6 @@ import onnxruntime as ORT
 import dill
 import cv2
 import numbers
-import torchvision.transforms as T
 from time import time
 from drawline import draw_rect
 import json
@@ -451,12 +450,12 @@ class Frame:
         return Frame(self.data()[crop_top:crop_bottom, crop_left:crop_right, ...])
 
     def get_rescaled_range_0_1_output(self):
-        logger.warning(f"Rescale Frame into [0,1]")
+        # logger.warning(f"Rescale Frame into [0,1]")
 
-        logger.info(f"Initial channel order:{self.shape()}")
-        logger.info(f"Change channel order to (C,H,W)")
+        # logger.info(f"Initial channel order:{self.shape()}")
+        # logger.info(f"Change channel order to (C,H,W)")
         self.to_CHW()
-        logger.info(f"Channel after {self.shape()}")
+        # logger.info(f"Channel after {self.shape()}")
 
         oldDat = self.data()  # oldDat channel is (C,H,W)
         # logger.info(f"oldDat {np.shape(oldDat)}")
@@ -528,7 +527,7 @@ class Frame:
         x0, y0 = box.top_left().x(), box.top_left().y()
         x1, y1 = box.bottom_right().x(), box.bottom_right().y()
 
-        logger.warning(f"[Dbug]: {x0} {y0} {x1} {y1} {self.width()} {self.height()}")
+        # logger.warning(f"[Dbug]: {x0} {y0} {x1} {y1} {self.width()} {self.height()}")
         if (
             0 <= x0 <= self.width()
             and 0 <= x1 <= self.width()

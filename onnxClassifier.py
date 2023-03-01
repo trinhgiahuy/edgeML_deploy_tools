@@ -2,7 +2,8 @@ import os
 from tqdm import tqdm
 import numpy as np
 import argparse
-import pandas as pd
+
+# import pandas as pd
 from time import time
 
 from skimage.io import imsave
@@ -53,7 +54,7 @@ if __name__ == "__main__":
         os.mkdir(drawingResultDir)
 
     modelOnnxPathName = os.path.join(modelDir, modelFn + ".onnx")
-    logger.info(modelOnnxPathName)
+    # logger.info(modelOnnxPathName)
     if not os.path.exists(COCO_verify_dir):
         msg = (
             'Cannot find "COCO_500_imgs" directory.',
@@ -108,7 +109,7 @@ if __name__ == "__main__":
         tempTimeList = [preProcessTime, inferenceTime, postProcessTime]
         timeBenchmarkList.append(tempTimeList)
 
-    logger.info("Finish benchmarking!!")
+    # logger.info("Finish benchmarking!!")
     timeBenchmarkArr = np.array(timeBenchmarkList)
     timeBenchamrkSum = timeBenchmarkArr.sum(axis=0)
     preProTime, inferTime, postProTime = (
@@ -122,6 +123,7 @@ if __name__ == "__main__":
 
     csvFileOut = modelFn + "_onnx" + ".csv"
     output_dir = os.path.join(output_dir, csvFileOut)
-    timeBenchmarkDF = pd.DataFrame(timeBenchmarkArr)
-    timeBenchmarkDF.to_csv(output_dir, header=False, index=False)
+    # timeBenchmarkDF = pd.DataFrame(timeBenchmarkArr)
+    # timeBenchmarkDF.to_csv(output_dir, header=False, index=False)
+    np.savetxt(output_dir, timeBenchmarkArr, delimiter=",")
     print(f"Finish exporting result to file {csvFileOut}")

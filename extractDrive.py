@@ -3,6 +3,7 @@ import tarfile
 from constant import *
 from loguru import logger
 import gdown
+import argparse
 
 cwd = os.getcwd()
 COCODir = cwd + "/COCO_500_imgs/"
@@ -33,7 +34,7 @@ def downloadCOCO():
         logger.info("File already exist!")
 
 
-def downloadApplicationsModel(name: str, prefix: str):
+def downloadApplicationsModel(name: str, application: str, prefix: str):
     applicationModelURL = modelLinkDrive[name]
     logger.info(f"Extracting model: {name} ... from {applicationModelURL}")
 
@@ -72,15 +73,24 @@ if __name__ == "__main__":
 
     downloadCOCO()
 
-    application = "image_class"
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--application", type=str, required=True, help="(image_class,object_detect)"
+    )
+    parser.add_argument(
+        "--prefix", type=str, required=True, help="(onnx, OpenVINO, tvn)"
+    )
+    args = parser.parse_args()
+
+    application = args.application
     # application = "object_detect"
 
-    prefix = "onnx"
+    prefix = args.prefix
 
     if application == "image_class":
         for name in imageClassModelName:
-            downloadApplicationsModel(name=name, prefix=prefix)
+            downloadApplicationsModel(name=name, application=application, prefix=prefix)
 
     if application == "object_detect":
         for name in objectDetectModelName:
-            downloadApplicationsModel(name=name, prefix=prefix)
+            downloadApplicationsModel(name=name, application=application, prefix=prefix)
