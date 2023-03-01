@@ -16,5 +16,5 @@ objectDetectModelName = ["fasterrcnn_resnet50_fpn_v2"]
 
 modelLinkDrive = {
     "alexnet": "https://drive.google.com/u/2/uc?id=1tv9NPj9RaYAsek8hCnsFx_YPdfyt9c6t",
-    "fasterrcnn_resnet50_fpn_v2": "https://drive.google.com/u/2/uc?id=1W3w80Jloy1WhnNKYi9xRmKQeeWhh9Yyr",
+    "fasterrcnn_resnet50_fpn_v2": "https://drive.google.com/u/2/uc?id=1_zturSuXbL4wVSZhybxzH-em1vhiCJDu",
 }
