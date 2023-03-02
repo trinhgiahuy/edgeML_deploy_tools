@@ -39,7 +39,25 @@ objectDetectModelName = [
 ]
 
 modelLinkDrive = {
-    "alexnet": "https://drive.google.com/u/2/uc?id=1tv9NPj9RaYAsek8hCnsFx_YPdfyt9c6t",
+    "alexnet": "https://drive.google.com/u/2/uc?id=1FPfEM7T1lXfezz_9jWY0jnp4KBq16wrz",
+    "googlenet":"https://drive.google.com/u/2/uc?id=1s9BH24hhzZBwWlzqZNicQuRrqRlIqO8f",
+    "efficientnet_b0":"https://drive.google.com/u/2/uc?id=19sv8_C36BN1lK_dZ-ARukN0pvK4pUmyS",
+    "densenet121":"https://drive.google.com/u/2/uc?id=1234hYCBK0VgZOLIZIqM4zMGNIphrdFKx",
+    "squeezenet1_0":"https://drive.google.com/u/2/uc?id=1Nb3I2lsJ1VzrmYPjjwrWkYQ3RAdNCCoC",
+    "inception_v3":"https://drive.google.com/u/2/uc?id=1YUqQ1dOKSpBWX8TRUZ7LgNiZCWCOEOKd",
+    "maxvit_t":"https://drive.google.com/u/2/uc?id=1kKfyEJLyd30vLARuf16SxkIu3WvwA3rb",
+    "shufflenet_v2_x0_5":"https://drive.google.com/u/2/uc?id=1_GEQRc8Oq_Ikg2uSIykgqxPonGuMwdBc",
+    "mobilenet_v2":"https://drive.google.com/u/2/uc?id=1TuuDSv20vhxCJrI5ZNkJjYrKIm2WGa6K",
+    "mobilenet_v3_small":"https://drive.google.com/u/2/uc?id=1D0dKvbrF4SIcJ6q-KEauWDa3cO2ydBnH",
+    "mobilenet_v3_large":"https://drive.google.com/u/2/uc?id=13FrrsBTH9wvLFWPBPEgkkAinUg35sZDJ",
+    "mnasnet0_5":"https://drive.google.com/u/2/uc?id=1yhxMtKafHwTC23cwyqIbGnCNzwNzXLGs",
+    "mnasnet0_75":"https://drive.google.com/u/2/uc?id=1FVZylLcnsU4NWCujk2WiGZ0geh18JH9m",
+    "mnasnet1_3":"https://drive.google.com/u/2/uc?id=1TJzku6MXIU1jRhHfB_TlCdgi26iQZunt",
+    "resnet18":"https://drive.google.com/u/2/uc?id=17m7CuXcnlHkco5CXrNhvOwLVbfpiD4Ix",
+
+    "resnext50_32x4d":"https://drive.google.com/u/2/uc?id=1NP13J-kbD5Hb7zs4lSyWNGb4S5teu9t8",
+    "wide_resnet50_2":"https://drive.google.com/u/2/uc?id=1JA4OQHJfMPtgECIpaZ71pXROO09Qpp3f",
+
     # "fasterrcnn_resnet50_fpn_v2": "https://drive.google.com/u/2/uc?id=1DAqbZmcp8a8WJbWhPZmBBhHFkBGtsVMh",
     "fasterrcnn_mobilenet_v3_large_320_fpn": "https://drive.google.com/u/2/uc?id=18m3-apGnDGwE_X5_AuojFhiYbeJU8mlq",
     "fasterrcnn_mobilenet_v3_large_fpn": "https://drive.google.com/u/2/uc?id=1vtdn-fpadNaBBscOxa1vCrhAhX1ADwEK",

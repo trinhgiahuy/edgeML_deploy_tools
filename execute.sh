@@ -23,7 +23,6 @@ echo "Download all models for application ${application}"
 python extractDrive.py --application $application --prefix $prefix
 
 if [ "$application" = "image_class" ]; then
-    echo "Skip for now"
     arrModelList=`python -c 'from constant import *; print(" ".join(getImageClassModelList()))'`
 fi
 

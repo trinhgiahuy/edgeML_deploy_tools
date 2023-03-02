@@ -43,7 +43,7 @@ if __name__ == "__main__":
 
     # Same directory with google drive
     predir = application
-    COCO_verify_dir = f"{cwd}/COCO_500_imgs"
+    COCO_verify_dir = f"{cwd}/COCO_5000_imgs"
     modelDir = f"{cwd}/{predir}_{prefix}"
     output_dir = f"{cwd}/csv_output"
 
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     # logger.info(modelOnnxPathName)
     if not os.path.exists(COCO_verify_dir):
         msg = (
-            'Cannot find "COCO_500_imgs" directory.',
+            'Cannot find "COCO_5000_imgs" directory.',
             "Please download COCO image dataset first",
         )
         raise RuntimeError(msg)
