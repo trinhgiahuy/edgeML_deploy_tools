@@ -38,7 +38,8 @@ modelLinkDrive = {
 }
 
 JetsonNanoLinkDrive = {
-    "fasterrcnn_resnet50_fpn":"https://drive.google.com/u/2/uc?id=13_HghVj1xNuu577A3K9c3oekeC_zIZ_a"
+    "fasterrcnn_resnet50_fpn":"https://drive.google.com/u/2/uc?id=13_HghVj1xNuu577A3K9c3oekeC_zIZ_a",
+    "fasterrcnn_mobilenet_v3_large_fpn": "https://drive.google.com/u/2/uc?id=1_rQk4N9OezQBbuaPFnqm1NCEVdWFuqwg"
 }
 
 def getImageClassModelList():
