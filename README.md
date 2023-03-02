@@ -2,6 +2,24 @@
 
 Fundamental tools to run inference on edge devices
 
+## Usage Steps:
+
+### Clone github repository
+
+```sh
+git clone 
+```
+
+### Convert all models to specified target 
+
+- For example 
+
+```sh
+bash ./convertAll.sh image_class
+```
+
+### Execute inference
+
 Example to run
 
 For Jetson Nano (Python 3.8.16 version), in `extractDrive.py` using this line `applicationModelURL = JetsonNanoLinkDrive[name]` instead
