@@ -4,6 +4,14 @@ Fundamental tools to run inference on edge devices
 
 Example to run
 
+For Jetson Nano (Python 3.8.16 version), in `extractDrive.py` using this line `applicationModelURL = JetsonNanoLinkDrive[name]` instead
+
+Execute run
+
+```sh
+bash ./execute.sh object_detect onnx
+```
+
 Image classification command example
 
 ```sh
