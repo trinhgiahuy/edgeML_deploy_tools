@@ -52,7 +52,7 @@ def downloadApplicationsModel(name: str, application: str, prefix: str):
         logger.warning(f"Directory {appPath} already exists!!")
 
     appFile = os.path.join(appPath, appTar)
-    # logger.info(f"appFile: {appFile}")
+    onnxAppFile = appFile.replace(".onnx.tar.gz",".onnx")
 
     if not os.path.isfile(appFile):
         logger.warning(f"Application model {name} not found. Downloading...")
@@ -60,11 +60,12 @@ def downloadApplicationsModel(name: str, application: str, prefix: str):
     else:
         logger.warning(f"Application model {name} found.")
 
-    logger.info(f"Extracting application model {name}...")
-    appFileTmp = tarfile.open(appFile)
-    appFileTmp.extractall(appPath)
-    appFileTmp.close()
-    logger.info(f"Finish extracting application model{name}")
+    if not os.path.isfile(onnxAppFile):
+        logger.warning(f"File is not extracted.Extracting application model {name}...")
+        appFileTmp = tarfile.open(appFile)
+        appFileTmp.extractall(appPath)
+        appFileTmp.close()
+        logger.info(f"Finish extracting application model{name}")
 
 
 if __name__ == "__main__":
