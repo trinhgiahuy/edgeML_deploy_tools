@@ -127,12 +127,7 @@ class ImgClassOnnxModel:
 
         logger.info(f"trying to run with execution provider: {execution_provider}")
         startLoadEngine = time()
-        self.session = ORT.InferenceSession(
-            onnx_path,
-            providers=[
-                execution_provider,
-            ],
-        )
+        self.session = ORT.InferenceSession(onnx_path, providers=[execution_provider,],)
         self.engineTime = time() - startLoadEngine
 
         self.input_name = self.session.get_inputs()[0].name
@@ -228,12 +223,7 @@ class ObjectDetectOnnxModel:
 
         logger.info(f"trying to run with execution provider: {execution_provider}")
         startLoadEngine = time()
-        self.session = ORT.InferenceSession(
-            onnx_path,
-            providers=[
-                execution_provider,
-            ],
-        )
+        self.session = ORT.InferenceSession(onnx_path, providers=[execution_provider,],)
         self.engineTime = time() - startLoadEngine
         self.input_name = self.session.get_inputs()[0].name
 
@@ -391,7 +381,7 @@ class Frame:
         image_width = self.width()
         print(f"Image width: {image_width}")
 
-        # output_size = (output_size[0], output_size[0])
+        output_size = (output_size[0], output_size[0])
         crop_height, crop_width = output_size
 
         if crop_width > image_width or crop_height > image_height:
@@ -579,8 +569,9 @@ class Frame:
             )
             requested_new_short = new_size if isinstance(new_size, int) else new_size[0]
 
-            new_short_, new_long_ = requested_new_short, int(
-                requested_new_short * long_ / short_
+            new_short_, new_long_ = (
+                requested_new_short,
+                int(requested_new_short * long_ / short_),
             )
 
             new_width, new_height = (

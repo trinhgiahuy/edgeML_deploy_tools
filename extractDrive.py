@@ -36,6 +36,10 @@ def downloadCOCO():
 
 def downloadApplicationsModel(name: str, application: str, prefix: str):
     applicationModelURL = modelLinkDrive[name]
+
+    # For jetson Nano using this line
+    # applicationModelURL = JetsonNanoLinkDrive[name]
+
     logger.info(f"Extracting model: {name} ... from {applicationModelURL}")
 
     appPath = f"{os.getcwd()}/{application}_{prefix}"
