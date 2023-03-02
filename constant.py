@@ -2,13 +2,27 @@ COCODriveLink = "https://drive.google.com/u/2/uc?id=1gE5C1UXcCyogZU3K95tn-bXfuF8
 
 imageClassModelName = [
     "alexnet",
-    # # "resnet18",
+    "googlenet",
+    "efficientnet_b0",
+    "densenet121",
+    "squeezenet1_0",
+    "inception_v3",
+    "maxvit_t",
+    "shufflenet_v2_x0_5",
+    "mobilenet_v2",
+    "mobilenet_v3_small",
+    "mobilenet_v3_large",
+    "mnasnet0_5",
+    "mnasnet0_75",
+    "mnasnet1_3",
+    "resnet18",
     # "resnet50",
     # "resnet101",
     # "resnet152",
-    # "resnext50_32x4d",
+    "resnext50_32x4d",
     # "resnext101_32x8d",
     # "resnext101_64x4d",
+    "wide_resnet50_2",
     # "googlenet",
 ]
 
@@ -17,7 +31,7 @@ objectDetectModelName = [
     "fasterrcnn_mobilenet_v3_large_fpn",
     "ssd300_vgg16",
     "ssdlite320_mobilenet_v3_large",
-    # "fasterrcnn_resnet50_fpn_v2", 
+    # "fasterrcnn_resnet50_fpn_v2",
     # "fasterrcnn_resnet50_fpn",
     # "fcos_resnet50_fpn",
     # "retinanet_resnet50_fpn_v2",
@@ -38,12 +52,12 @@ modelLinkDrive = {
 }
 
 JetsonNanoLinkDrive = {
-    #"fasterrcnn_resnet50_fpn":"https://drive.google.com/u/2/uc?id=13_HghVj1xNuu577A3K9c3oekeC_zIZ_a",
+    # "fasterrcnn_resnet50_fpn":"https://drive.google.com/u/2/uc?id=13_HghVj1xNuu577A3K9c3oekeC_zIZ_a",
     "fasterrcnn_mobilenet_v3_large_fpn": "https://drive.google.com/u/2/uc?id=1_rQk4N9OezQBbuaPFnqm1NCEVdWFuqwg",
-    "ssd300_vgg16":"https://drive.google.com/u/2/uc?id=1J-CSHqZy8-WM6r2JKk3-bO3Lc4N6kXoG",
-    "ssdlite320_mobilenet_v3_large":"https://drive.google.com/u/2/uc?id=1BCneFf2fOYJumSjq4IS5iV4vN6w7kaV7"
-    
+    "ssd300_vgg16": "https://drive.google.com/u/2/uc?id=1J-CSHqZy8-WM6r2JKk3-bO3Lc4N6kXoG",
+    "ssdlite320_mobilenet_v3_large": "https://drive.google.com/u/2/uc?id=1BCneFf2fOYJumSjq4IS5iV4vN6w7kaV7",
 }
+
 
 def getImageClassModelList():
     return imageClassModelName

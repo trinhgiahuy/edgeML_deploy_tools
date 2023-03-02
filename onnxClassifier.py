@@ -46,12 +46,6 @@ if __name__ == "__main__":
     COCO_verify_dir = f"{cwd}/COCO_500_imgs"
     modelDir = f"{cwd}/{predir}_{prefix}"
     output_dir = f"{cwd}/csv_output"
-    drawingResultDir = f"{cwd}/drawingRes/{modelFn}"
-    if not os.path.exists(drawingResultDir):
-        logger.warning(
-            f"Creating drawing object detection directory {drawingResultDir}..."
-        )
-        os.mkdir(drawingResultDir)
 
     modelOnnxPathName = os.path.join(modelDir, modelFn + ".onnx")
     # logger.info(modelOnnxPathName)
@@ -78,6 +72,14 @@ if __name__ == "__main__":
     elif application == "object_detect":
         onnx_model = ObjectDetectOnnxModel(onnx_path=modelOnnxPathName)
         isObjDetectApplication = True
+
+    if isObjDetectApplication:
+        drawingResultDir = f"{cwd}/drawingRes/{modelFn}"
+        if not os.path.exists(drawingResultDir):
+            logger.warning(
+                f"Creating drawing object detection directory {drawingResultDir}..."
+            )
+            os.mkdir(drawingResultDir)
 
     scoreClasstDict = {}
     timeBenchmarkList = []

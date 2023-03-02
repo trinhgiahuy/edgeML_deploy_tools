@@ -6,7 +6,7 @@ import gdown
 import argparse
 
 cwd = os.getcwd()
-COCODir = cwd + "/COCO_500_imgs/"
+COCODir = cwd + "/COCO_5000_imgs/"
 COCOExist = os.path.exists(COCODir)
 csv_output_dir = f"{cwd}/csv_output"
 drawing_detect_dir = f"{cwd}/drawingRes"
@@ -16,22 +16,20 @@ def downloadCOCO():
     if not COCOExist:
         logger.info("COCO image directory is not exist. Creating...")
         os.mkdir(COCODir)
+        COCOTarFile = "5000_COCO_imgs.tar.gz"
+        COCOZipFile = os.path.join(COCODir, COCOTarFile)
+        if not os.path.isfile(COCOZipFile):
+            logger.info("Downloading COCO zip file...")
+            gdown.download(COCODriveLink, COCOZipFile, quiet=False)
 
+            logger.info("Extracting COCO image dataset...")
+            COCOFile = tarfile.open(COCOZipFile)
+            COCOFile.extractall(COCODir)
+            COCOFile.close()
+        else:
+            logger.info("File already exist!")
     else:
         logger.info("COCO Image Dataset already exists")
-
-    COCOTarFile = "5000_COCO_imgs.tar.gz"
-    COCOZipFile = os.path.join(COCODir, COCOTarFile)
-    if not os.path.isfile(COCOZipFile):
-        logger.info("Downloading COCO zip file...")
-        gdown.download(COCODriveLink, COCOZipFile, quiet=False)
-
-        logger.info("Extracting COCO image dataset...")
-        COCOFile = tarfile.open(COCOZipFile)
-        COCOFile.extractall(COCODir)
-        COCOFile.close()
-    else:
-        logger.info("File already exist!")
 
 
 def downloadApplicationsModel(name: str, application: str, prefix: str):
@@ -52,7 +50,7 @@ def downloadApplicationsModel(name: str, application: str, prefix: str):
         logger.warning(f"Directory {appPath} already exists!!")
 
     appFile = os.path.join(appPath, appTar)
-    onnxAppFile = appFile.replace(".onnx.tar.gz",".onnx")
+    onnxAppFile = appFile.replace(".onnx.tar.gz", ".onnx")
 
     if not os.path.isfile(appFile):
         logger.warning(f"Application model {name} not found. Downloading...")

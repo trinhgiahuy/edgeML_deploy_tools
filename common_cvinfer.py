@@ -127,7 +127,12 @@ class ImgClassOnnxModel:
 
         logger.info(f"trying to run with execution provider: {execution_provider}")
         startLoadEngine = time()
-        self.session = ORT.InferenceSession(onnx_path, providers=[execution_provider,],)
+        self.session = ORT.InferenceSession(
+            onnx_path,
+            providers=[
+                execution_provider,
+            ],
+        )
         self.engineTime = time() - startLoadEngine
 
         self.input_name = self.session.get_inputs()[0].name
@@ -223,7 +228,12 @@ class ObjectDetectOnnxModel:
 
         logger.info(f"trying to run with execution provider: {execution_provider}")
         startLoadEngine = time()
-        self.session = ORT.InferenceSession(onnx_path, providers=[execution_provider,],)
+        self.session = ORT.InferenceSession(
+            onnx_path,
+            providers=[
+                execution_provider,
+            ],
+        )
         self.engineTime = time() - startLoadEngine
         self.input_name = self.session.get_inputs()[0].name
 
@@ -377,9 +387,9 @@ class Frame:
         if isinstance(output_size, numbers.Number):
             Hôm
         image_height = self.height()
-        print(f"Image_height:{image_height}")
+        # print(f"Image_height:{image_height}")
         image_width = self.width()
-        print(f"Image width: {image_width}")
+        # print(f"Image width: {image_width}")
 
         output_size = (output_size[0], output_size[0])
         crop_height, crop_width = output_size
@@ -436,7 +446,7 @@ class Frame:
                 padding_ltrb,
             )
 
-        print(f"{crop_top}, {crop_bottom},{crop_left},{crop_right}")
+        # print(f"{crop_top}, {crop_bottom},{crop_left},{crop_right}")
         return Frame(self.data()[crop_top:crop_bottom, crop_left:crop_right, ...])
 
     def get_rescaled_range_0_1_output(self):
@@ -580,7 +590,7 @@ class Frame:
                 else (new_long_, new_short_)
             )
 
-            print(f"return as new height: {new_height}, new width: {new_width}")
+            # print(f"return as new height: {new_height}, new width: {new_width}")
             return new_height, new_width
 
     ## My own resize based on Torch for image classification
@@ -597,7 +607,7 @@ class Frame:
 
         output_size = [new_height, new_width]
 
-        print(f"Resizing into new output size {output_size}")
+        # print(f"Resizing into new output size {output_size}")
 
         new_frame_data = cv2.resize(
             self.data(),
