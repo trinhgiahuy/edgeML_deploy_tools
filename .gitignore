@@ -1,0 +1,4 @@
+COCO_5000_imgs/
+__pycache__/
+data/
+onnx_output_3.9.13/
