@@ -1,5 +1,10 @@
 ## edgeML_deploy_tools
 
+Devices' IP address
+- Raspberry Pi 3B : `pi@192.168.13`
+- Raspberry Pi 4 : `pi@192.168.1.23`
+- Jetson Nano : `proe@192.168.1.12`
+
 Fundamental tools to run inference on edge devices
 
 ## Usage Steps:
