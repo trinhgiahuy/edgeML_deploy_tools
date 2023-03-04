@@ -190,17 +190,8 @@ def ObjectDetectPreProcess(frame: Frame, config: dict):
         )
 
         frameToDraw = frame
-    #     # ratio=None
-    #     # meta_data['resize_ratio'] = ratio
-    #     # meta_data['height_after'] = frame.height()
-    #     # meta_data['width_after'] = frame.width()
-
-    #     # logger.warning(f"After: {frame.shape()}")
-
-    #     ## TEST CODE
-    #     frame=frame.transpose(2,0,1)
-    #     frame=frame.reshape(1,3,416,416)
-    #     return frame.astype(np.float32), None
+        meta_data["height_after"] = frame.height()
+        meta_data["width_after"] = frame.width()
 
     if "min_size" in config_keys and "max_size" in config_keys:
         min_size = config["min_size"]
@@ -217,14 +208,6 @@ def ObjectDetectPreProcess(frame: Frame, config: dict):
 
     else:
         # # For custom model like tinyYOLOv2
-        # logger.info("2")
-        # frame.to_CHW()
-
-        # new_height = preProcessing['new_height']
-        # new_width = preProcessing['new_width']
-        # output = frame.reshape(3,new_height,new_width)
-
-        # logger.warning(f"After all {frame.shape()}")
         output = frame.data()
         output = np.transpose(output, (2, 0, 1))
 
@@ -236,66 +219,6 @@ def ObjectDetectPreProcess(frame: Frame, config: dict):
     # logger.info(np.shape(output))
 
     return output, meta_data, frameToDraw
-
-
-# def ObjectDetectPostProcess(frame_batch: Frame, model_output, config: dict):
-
-#     # logger.info(config)
-#     box_coord = model_output[0]
-
-#     isLabelLast = config["label_last"]
-#     if isLabelLast:
-#         label_arr = model_output[2]
-#         confidence_arr = model_output[1]
-#     else:
-#         label_arr = model_output[1]
-#         confidence_arr = model_output[2]
-
-#     box_coord_shape = np.shape(box_coord)
-#     box_row = box_coord_shape[0]
-#     boundingBoxList = []
-#     frame_batch = np.transpose(frame_batch[0], (1, 2, 0))
-#     frame_batch *= 255
-#     # logger.info(frame_batch)
-#     drawingFrame = Frame(frame_batch.astype(np.uint8), HWC=True)
-
-#     # logger.warning(model_output)
-
-#     for i in range(box_row):
-#         coordinate = box_coord[i]
-#         confidenceVal = confidence_arr[i]
-#         labelIdx = label_arr[i]
-#         # logger.info(labelIdx)
-#         classIdList = config["class_names"]
-#         label = classIdList[labelIdx]
-#         # logger.info(label)
-
-#         x0, y0, x1, y1 = (
-#             round(coordinate[0]),
-#             round(coordinate[1]),
-#             round(coordinate[2]),
-#             round(coordinate[3]),
-#         )
-#         topLeftPoint = Point(x=x0, y=y0)
-#         bottomRightPoint = Point(x=x1, y=y1)
-
-#         # logger.info(coordinate)
-#         # logger.info(f"{x0}, {y0}, {x1}, {y1}")
-#         tmpBoundingBox = BoundingBox(
-#             top_left=topLeftPoint,
-#             bottom_right=bottomRightPoint,
-#             confidence=confidenceVal,
-#             label=label,
-#         )
-#         boundingBoxList.append(tmpBoundingBox)
-
-#     drawingFrame.draw_bounding_boxes(boxes=boundingBoxList)
-
-#     return drawingFrame.data()
-
-from PIL import Image, ImageDraw
-
-boundingBoxList = []
 
 
 # def old(onnx_output, img):
@@ -430,45 +353,16 @@ def ObjectDetectPostProcess(onnx_output, imgFrameData: Frame, config: dict):
         scoreMatExp = np.exp(np.asarray(x))
         return scoreMatExp / scoreMatExp.sum(0)
 
-    clut = [
-        (0, 0, 0),
-        (255, 0, 0),
-        (255, 0, 255),
-        (0, 0, 255),
-        (0, 255, 0),
-        (0, 255, 128),
-        (128, 255, 0),
-        (128, 128, 0),
-        (0, 128, 255),
-        (128, 0, 128),
-        (255, 0, 128),
-        (128, 0, 255),
-        (255, 128, 128),
-        (128, 255, 128),
-        (255, 255, 0),
-        (255, 128, 128),
-        (128, 128, 255),
-        (255, 128, 128),
-        (128, 255, 128),
-        (128, 128, 128),
-    ]
-
     blockSize = 32
-    # gridWidth = int(416/blockSize)
-    gridWidth = 13
-    # gridHeight = int(416/blockSize)
-    gridHeight = 13
+    gridWidth = int(416 / blockSize)
+    # gridWidth = 13
+    gridHeight = int(416 / blockSize)
+    # gridHeight = 13
 
-    # Reconstruct frame to original color channel (but with resized already)
-    # tempData = np.transpose(imgFrameData.data(),(1,2,0))
-    # tempData = imgFrameData.data()
-    # drawingFrame = Frame(tempData.astype(np.uint8))
     drawingFrame = imgFrameData
     label_classes = config["class_names"]
     confidence_threshold = config["score_thresh"]
     anchors = config["anchors"]
-    # logger.info(drawingFrame.data())
-    # logger.info(drawingFrame.shape())
 
     boundingBoxList = []
     for cy in range(gridHeight):
@@ -495,25 +389,14 @@ def ObjectDetectPostProcess(onnx_output, imgFrameData: Frame, config: dict):
                 detectedClass = classes.argmax()
 
                 if classes[detectedClass] * confidence > confidence_threshold:
-                    # logger.info(detectedClass)
-                    color = clut[detectedClass]
                     x = x - w / 2
                     y = y - h / 2
-
                     x0, y0, x1, y1 = (round(x), round(y), round(x + w), round(y + h))
-                    # logger.info(f"{x0} {y0} {x1} {y1}")
 
                     x0 = 0 if x0 < 0 else x0
                     y0 = 0 if y0 < 0 else y0
-
-                    # x1 = 0 if x1 < 0 else x1
-                    # y1 = 0 if y1 < 0 else x0
-
                     x1 = drawingFrame.width() if x1 > drawingFrame.width() else x1
                     y1 = drawingFrame.height() if y1 > drawingFrame.height() else y1
-
-                    # x1 = drawingFrame.height() if x1 > drawingFrame.height() else x1
-                    # y1 = drawingFrame.width() if y1 > drawingFrame.width() else y1
 
                     label = label_classes[detectedClass]
                     topLeftPoint = Point(x=x0, y=y0)
@@ -526,17 +409,9 @@ def ObjectDetectPostProcess(onnx_output, imgFrameData: Frame, config: dict):
                     )
                     boundingBoxList.append(tmpBoundingBox)
 
-                    # draw.line((x  ,y  ,x+w,y ),fill=color)
-                    # draw.line((x  ,y  ,x  ,y+h),fill=color)
-                    # draw.line((x+w,y  ,x+w,y+h),fill=color)
-                    # draw.line((x  ,y+h,x+w,y+h),fill=color)
-
     drawingFrame.draw_bounding_boxes(boxes=boundingBoxList)
-    # logger.info(np.shape(drawingFrame.data()))
-    # logger.info(drawingFrame.data())
 
     return drawingFrame.data()
-    # img.save("result.png")
 
 
 def write_artifacts(
@@ -687,10 +562,10 @@ if __name__ == "__main__":
     ort_session = rt.InferenceSession(model_onnx_path)
     input_name = ort_session.get_inputs()[0].name
 
-    # inputAll = [node.name for node in onnx_model.graph.input]
-    # inputInitializer = [node.name for node in onnx_model.graph.initializer]
-    # net_feed_input = list(set(inputAll) - set(inputInitializer))
-    # assert len(net_feed_input) == 1
+    inputAll = [node.name for node in onnx_model.graph.input]
+    inputInitializer = [node.name for node in onnx_model.graph.initializer]
+    net_feed_input = list(set(inputAll) - set(inputInitializer))
+    assert len(net_feed_input) == 1
 
     for i in range(20):
         # for i in [6,7,8,9,10,11,12,13,14,15,16,111,222,333]:
@@ -724,11 +599,7 @@ if __name__ == "__main__":
         # logger.warning(f"Org: {frame_batch_org}")
         # logger.warning(f"My: {batchTmp}")
 
-        # frame_resized = img
         onnxTmp = ort_session.run(None, {input_name: batchTmp})
-        # logger.info(f"shape out:{np.shape(onnxTmp)}")
-
-        # logger.info(f"input postprocess {frame_resized.data()}")
         drawingRet = ObjectDetectPostProcess(
             onnx_output=onnxTmp[0][0], imgFrameData=frameToDraw, config=postProcessing
         )
