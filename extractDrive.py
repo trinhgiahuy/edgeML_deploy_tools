@@ -97,3 +97,7 @@ if __name__ == "__main__":
     if application == "object_detect":
         for name in objectDetectModelName:
             downloadApplicationsModel(name=name, application=application, prefix=prefix)
+
+    if application == "object_detect_custom":
+        for name in customobjectDetectModelName:
+            downloadApplicationsModel(name=name, application=application, prefix=prefix)

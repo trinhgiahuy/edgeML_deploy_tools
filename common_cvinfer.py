@@ -127,12 +127,7 @@ class ImgClassOnnxModel:
 
         logger.info(f"trying to run with execution provider: {execution_provider}")
         startLoadEngine = time()
-        self.session = ORT.InferenceSession(
-            onnx_path,
-            providers=[
-                execution_provider,
-            ],
-        )
+        self.session = ORT.InferenceSession(onnx_path, providers=[execution_provider,],)
         self.engineTime = time() - startLoadEngine
 
         self.input_name = self.session.get_inputs()[0].name
@@ -228,12 +223,7 @@ class ObjectDetectOnnxModel:
 
         logger.info(f"trying to run with execution provider: {execution_provider}")
         startLoadEngine = time()
-        self.session = ORT.InferenceSession(
-            onnx_path,
-            providers=[
-                execution_provider,
-            ],
-        )
+        self.session = ORT.InferenceSession(onnx_path, providers=[execution_provider,],)
         self.engineTime = time() - startLoadEngine
         self.input_name = self.session.get_inputs()[0].name
 
@@ -277,6 +267,90 @@ class ObjectDetectOnnxModel:
         # calling postprocess
         drawingFrameData = self.postprocess_function(
             model_input, model_output, self.config["postprocessing"]
+        )
+        postProcessTime = time()
+        self.postProcessTime = postProcessTime - inferenceTime
+
+        return drawingFrameData
+
+
+class customObjectDetectOnnxModel:
+    def __init__(self, onnx_path, execution_provider="CPUExecutionProvider"):
+        # Load time recorder
+        self.preProcessTime = 0.0
+        self.inferenceTime = 0.0
+        self.postProcessTime = 0.0
+        self.engineTime = 0.0
+        # load preprocessing function
+        preprocess_file = onnx_path.replace(".onnx", ".preprocess")
+        # preprocess_file="/home/user/datTran/submission/testCVInfer/deploy/object_detect_custom_onnx/tinyYOLOv2.preprocess"
+        assert os.path.exists(preprocess_file)
+        with open(preprocess_file, "rb") as fid:
+            self.preprocess_function = dill.load(fid)
+
+        # similarly, load postprocessing
+        # postprocess_file=preprocess_file.replace(".preprocess",".postprocess")
+        postprocess_file = onnx_path.replace(".onnx", ".postprocess")
+        assert os.path.exists(postprocess_file)
+        with open(postprocess_file, "rb") as fid:
+            self.postprocess_function = dill.load(fid)
+
+        # load onnx model from onnx_path
+        avail_providers = ORT.get_available_providers()
+        logger.info("all available ExecutionProviders are:")
+        for idx, provider in enumerate(avail_providers):
+            logger.info(f"\t {provider}")
+
+        logger.info(f"trying to run with execution provider: {execution_provider}")
+        startLoadEngine = time()
+        onnx_path = preprocess_file.replace(".preprocess", ".onnx")
+        self.session = ORT.InferenceSession(onnx_path, providers=[execution_provider,],)
+        self.engineTime = time() - startLoadEngine
+        self.input_name = self.session.get_inputs()[0].name
+
+        # load config from json file
+        # config_path is a json file
+        config_file = onnx_path.replace(".onnx", ".configuration.json")
+        assert os.path.exists(config_file)
+        with open(config_file, "r") as fid:
+            # self.config is a dictionary
+            self.config = json.loads(fid.read())
+
+    @logger.catch
+    def preprocess(self, frame: Frame):
+        # input must be a frame
+        assert isinstance(frame, Frame)
+        return self.preprocess_function(frame, self.config["preprocessing"])
+
+    @logger.catch
+    def postprocess(self, frame, model_output):
+        return self.postprocess_function(
+            model_output, frame, self.config["postprocessing"]
+        )
+
+    @logger.catch
+    def __call__(self, frame: Frame):
+        # input must be a frame
+        assert isinstance(frame, Frame)
+
+        # calling preprocess
+        start = time()
+        model_input, _, self.frameToDraw = self.preprocess_function(
+            frame, self.config["preprocessing"]
+        )
+        preProcessTime = time()
+        self.preProcessTime = preProcessTime - start
+
+        # compute ONNX Runtime output prediction
+        ort_inputs = {self.input_name: model_input}
+        # model_output here shape example (1,1,25,13,13)
+        model_output = self.session.run(None, ort_inputs)
+        inferenceTime = time()
+        self.inferenceTime = inferenceTime - preProcessTime
+
+        # calling postprocess
+        drawingFrameData = self.postprocess_function(
+            model_output[0][0], self.frameToDraw, self.config["postprocessing"]
         )
         postProcessTime = time()
         self.postProcessTime = postProcessTime - inferenceTime

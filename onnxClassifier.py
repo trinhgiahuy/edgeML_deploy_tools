@@ -72,6 +72,10 @@ if __name__ == "__main__":
     elif application == "object_detect":
         onnx_model = ObjectDetectOnnxModel(onnx_path=modelOnnxPathName)
         isObjDetectApplication = True
+    elif application == "object_detect_custom":
+        logger.warning(modelOnnxPathName)
+        onnx_model = customObjectDetectOnnxModel(onnx_path=modelOnnxPathName)
+        isObjDetectApplication = True
 
     if isObjDetectApplication:
         drawingResultDir = f"{cwd}/drawingRes/{modelFn}"
@@ -98,6 +102,7 @@ if __name__ == "__main__":
             # Drawing image to "drawingRes" directory
             assert os.path.exists(drawingResultDir)
             imgPath = os.path.join(drawingResultDir, f"{i}.jpg")
+            # logger.warning(imgPath)
             imsave(imgPath, drawingFrameOut)
         else:
             logger.warning("At least one application must be specified")

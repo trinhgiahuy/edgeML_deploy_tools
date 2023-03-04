@@ -38,6 +38,8 @@ objectDetectModelName = [
     # "retinanet_resnet50_fpn",
 ]
 
+customobjectDetectModelName = ["tinyYOLOv2"]
+
 modelLinkDrive = {
     "alexnet": "https://drive.google.com/u/2/uc?id=1FPfEM7T1lXfezz_9jWY0jnp4KBq16wrz",
     "googlenet":"https://drive.google.com/u/2/uc?id=1s9BH24hhzZBwWlzqZNicQuRrqRlIqO8f",
@@ -67,6 +69,7 @@ modelLinkDrive = {
     # "retinanet_resnet50_fpn": "https://drive.google.com/u/2/uc?id=1NEDQCGFQO5z2CmNbyNBx_wVSBjSM1LuO",
     "ssd300_vgg16": "https://drive.google.com/u/2/uc?id=1eoC_3tH_s0HbuMTJ-j2zEBr1uTTFe529",
     "ssdlite320_mobilenet_v3_large": "https://drive.google.com/u/2/uc?id=14qxtYiZ6euKSYRgePFK4XI9UQAaopvCO",
+    "tinyYOLOv2": "https://drive.google.com/u/2/uc?id=1viejka4pVIKRsHCsd3ljvkParN9DxQ8r",
 }
 
 JetsonNanoLinkDrive = {
@@ -83,3 +86,6 @@ def getImageClassModelList():
 
 def getObjectDetectModelList():
     return objectDetectModelName
+    
+def getObjectDetectCustomModelList():
+    return customobjectDetectModelName
