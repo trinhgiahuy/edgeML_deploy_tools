@@ -4,6 +4,7 @@ import numpy as np
 import argparse
 
 # import pandas as pd
+import time as t
 from time import time
 
 from skimage.io import imsave
@@ -16,6 +17,9 @@ except ImportError as e:
 
 
 if __name__ == "__main__":
+
+    timeSleep = 5*60
+
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--numIteration", type=int, default=5000, help="Number of iterations to run"
@@ -84,6 +88,21 @@ if __name__ == "__main__":
                 f"Creating drawing object detection directory {drawingResultDir}..."
             )
             os.mkdir(drawingResultDir)
+    
+    # WARM UP MODEL FOR CACHE LOAD
+    for i in range(100):
+        
+        randomDump = np.random.rand(500,500,3)
+        randomDump = Frame(randomDump.astype(np.uint8))
+
+        assert isImgClassApplication is True or isObjDetectApplication is True
+        if isImgClassApplication:
+            classOut, scoreOut = onnx_model(randomDump)
+        elif isObjDetectApplication:
+            drawingFrameOut = onnx_model(randomDump)
+    
+    logger.info("Finish warm up model. Sleep for 5 minutes before benchmarking...")
+    t.sleep(timeSleep)
 
     scoreClasstDict = {}
     timeBenchmarkList = []
@@ -133,4 +152,6 @@ if __name__ == "__main__":
     # timeBenchmarkDF = pd.DataFrame(timeBenchmarkArr)
     # timeBenchmarkDF.to_csv(output_dir, header=False, index=False)
     np.savetxt(output_dir, timeBenchmarkArr, delimiter=",")
-    print(f"Finish exporting result to file {csvFileOut}")
+    print(f"Finish exporting result to file {csvFileOut}. Sleeping for 5 mins...")
+
+    t.sleep(timeSleep)
