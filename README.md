@@ -4,6 +4,16 @@ Devices' IP address
 - Raspberry Pi 3B : `pi@192.168.13`
 - Raspberry Pi 4 : `pi@192.168.1.23`
 - Jetson Nano : `proe@192.168.1.12`
+- Jetson TX2 : `ubuntu@192.168.1.17`
+```sh
+Python 3.6.9 
+CUDA 10.2 
+onnx==1.11.0 
+onnxruntime-gpu @ file:///home/ubuntu/edge_software/edge_software/edge_sw/bootstrap/onnxruntime_gpu-1.8.0-cp36-cp36m-linux_aarch64.whl
+tensorrt==7.1.3.0
+```
+
+Check cudnn from [this](https://stackoverflow.com/questions/31326015/how-to-verify-cudnn-installation)
 
 Fundamental tools to run inference on edge devices
 
