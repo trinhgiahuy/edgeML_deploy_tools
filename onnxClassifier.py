@@ -10,9 +10,19 @@ import cv2
 from loguru import logger
 import dill
 import numbers
+from google.protobuf.json_format import MessageToDict
+import json
 
 from skimage.io import imsave
 # from common_cvinfer import *
+
+INTERPOLATIONS = {
+    "cubic": cv2.INTER_CUBIC,
+    "linear": cv2.INTER_LINEAR,
+    "nearest": cv2.INTER_NEAREST,
+    "area": cv2.INTER_AREA,
+    "lanczos": cv2.INTER_LANCZOS4,
+}
 
 class Point:
     """
