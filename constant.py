@@ -3,19 +3,20 @@ COCODriveLink = "https://drive.google.com/u/2/uc?id=1gE5C1UXcCyogZU3K95tn-bXfuF8
 imageClassModelName = [
     "alexnet",
     "googlenet",
-    "efficientnet_b0",
-    "densenet121",
-    "squeezenet1_0",
-    "inception_v3",
-    "maxvit_t",
-    "shufflenet_v2_x0_5",
-    "mobilenet_v2",
-    "mobilenet_v3_small",
-    "mobilenet_v3_large",
-    "mnasnet0_5",
-    "mnasnet0_75",
-    "mnasnet1_3",
-    "resnet18",
+   "efficientnet_b0",
+   "densenet121",
+   "squeezenet1_0",
+   "inception_v3",
+#    "maxvit_t",
+   "shufflenet_v2_x0_5",
+   "mobilenet_v2",
+   "mobilenet_v3_small",
+   "mobilenet_v3_large",
+   "mnasnet0_5",
+#    "mnasnet0_75",
+    "mnasnet1_0",
+#    "mnasnet1_3",
+   "resnet18",
     # # "resnet50",
     # # "resnet101",
     # # "resnet152",
@@ -80,10 +81,26 @@ JetsonNanoLinkDrive = {
 }
 
 JetsonTX2LinkDrive={
-    "alexnet":"https://drive.google.com/u/2/uc?id=1EQ4EUmzO_z-btbYL8WoanHTjsdfoW-7N"
+    "alexnet":"https://drive.google.com/u/2/uc?id=1EQ4EUmzO_z-btbYL8WoanHTjsdfoW-7N",
+    "googlenet":"https://drive.google.com/u/2/uc?id=12Qztk1_fzGNy21CF9zfSQq_GG-P1sHjV",
+    "efficientnet_b0":"https://drive.google.com/uc?id=1TscfrRJJ1UfNeQNTVB8PuDc9n1VWEtkk",
+    "densenet121":"https://drive.google.com/uc?id=1sMsanepR7moj1rLhkEA0i37rqWilP4L9",
+    "squeezenet1_0":"https://drive.google.com/uc?id=1bYaS0Cg34f2P6wumh4ehQNwS7wNsCMks",
+    "inception_v3":"https://drive.google.com/uc?id=1pPR0w6c6LjIG16BRfsVysmfwB34pGR0W",
+    "shufflenet_v2_x0_5":"https://drive.google.com/uc?id=1zyyaYjA_J-eMrTYMIxoN1pGFv1EyY-3Y",
+    "mobilenet_v2":"https://drive.google.com/uc?id=1Drw0VTONIe9oHsaHA7lli6eYnNz3MI3d",
+    "mobilenet_v3_small":"https://drive.google.com/uc?id=1KJn9D68VMorkJUyvLBloGf0lXpMAsN5Y",
+    "mobilenet_v3_large":"https://drive.google.com/uc?id=1QE34fl5zkqrm9UGygNy__bkzEBeI8-fp",
+    "mnasnet0_5":"https://drive.google.com/u/2/uc?id=1zyyaYjA_J-eMrTYMIxoN1pGFv1EyY-3Y",
+    "mnasnet0_75":"",
+    "mnasnet1_0":"https://drive.google.com/uc?id=1WR1rddRg3LcFbycD3kprXEYiTSl-gQ6H",
+    "mnasnet1_3":"",
+    "resnet18":"https://drive.google.com/u/2/uc?id=1llezqtYeDA7kVew3hJyHY8RVhdBKIuks",
 }
 
-
+execProvider = [
+    ""
+]
 def getImageClassModelList():
     return imageClassModelName
 

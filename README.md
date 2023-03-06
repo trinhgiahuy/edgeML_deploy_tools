@@ -56,3 +56,23 @@ Object detection command example
 ```sh
 python onnxClassifier.py --numIteration 2 --modelFn fasterrcnn_resnet50_fpn_v2 --application object_detect --prefix onnx
 ```
+
+### Models to be run on devices
+
+JetsonTX2=[
+    "alexnet",
+    "googlenet",
+    "efficientnet_b0",
+    "densenet121",
+    "squeezenet1_0",
+    "inception_v3",
+    "shufflenet_v2_x0_5",
+    "mobilenet_v2",
+    "mobilenet_v3_small",
+    "mobilenet_v3_large",
+    "mnasnet0_5",
+    "mnasnet0_75",
+    "mnasnet1_0"
+    "mnasnet1_3",
+    "resnet18"
+]

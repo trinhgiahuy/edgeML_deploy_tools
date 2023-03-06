@@ -1,9 +1,7 @@
-from convert_constant import (
-    IMAGENET_CLASSES,
-    COCO_INSTANCE_CATEGORY_NAMES,
-    TINY_YOLO_LABEL_CLASSES,
-)
+from convert_constant import *
 
+# NOTE: For imageClassificationModel, if have mean/std, function ImgClassPreProcess
+# scaled to [0,1] before normalized
 imgClassModelsCfg = {
     # https://pytorch.org/vision/main/models/generated/torchvision.models.alexnet.html
     "alexnet": {
@@ -16,6 +14,70 @@ imgClassModelsCfg = {
         },
         "postprocessing": {"class_names": IMAGENET_CLASSES},
     },
+    "googlenet": {
+        "preprocessing": {
+            "resize_size": 256,
+            "crop_size": 224,
+            "mean": [0.485, 0.456, 0.406],
+            "std": [0.229, 0.224, 0.225],
+            "interpolation": "linear",    
+        },
+        "postprocessing": {"class_names": IMAGENET_CLASSES},
+    },
+    "efficientnet_b0":{
+        "preprocessing": {
+            "resize_size": 256,  # It will compute height/width based on resize size
+            "crop_size": 224,
+            "mean": [0.485, 0.456, 0.406],
+            "std": [0.229, 0.224, 0.225],
+            "interpolation": "linear",
+        },
+        "postprocessing": {"class_names": IMAGENET_CLASSES},    
+    },
+
+    "densenet121":{
+        "preprocessing": {
+            "resize_size": 256,  # It will compute height/width based on resize size
+            "crop_size": 224,
+            "mean": [0.485, 0.456, 0.406],
+            "std": [0.229, 0.224, 0.225],
+            "interpolation": "linear",
+        },
+        "postprocessing": {"class_names": IMAGENET_CLASSES}, 
+    },
+
+    "squeezenet1_0":{
+        "preprocessing": {
+            "resize_size": 256,  # It will compute height/width based on resize size
+            "crop_size": 224,
+            "mean": [0.485, 0.456, 0.406],
+            "std": [0.229, 0.224, 0.225],
+            "interpolation": "linear",
+        },
+        "postprocessing": {"class_names": IMAGENET_CLASSES},         
+    },
+
+    "inception_v3":{
+        "preprocessing": {
+            "resize_size": 342,  # It will compute height/width based on resize size
+            "crop_size": 299,
+            "mean": [0.485, 0.456, 0.406],
+            "std": [0.229, 0.224, 0.225],
+            "interpolation": "linear",
+        },
+        "postprocessing": {"class_names": IMAGENET_CLASSES},         
+    },
+    "shufflenet_v2_x0_5":{
+        "preprocessing": {
+            "resize_size": 256,  # It will compute height/width based on resize size
+            "crop_size": 224,
+            "mean": [0.485, 0.456, 0.406],
+            "std": [0.229, 0.224, 0.225],
+            "interpolation": "linear",
+        },
+        "postprocessing": {"class_names": IMAGENET_CLASSES},         
+    },
+
     # Resize size 232 , DEFAULT: IMAGENET1K_V2
     # ? Recheck acc of verify img
     "mobilenet_v2": {
@@ -68,6 +130,16 @@ imgClassModelsCfg = {
             "interpolation": "linear",
         },
         "postprocessing": {"class_names": IMAGENET_CLASSES},
+    },
+    "mnasnet1_0": {
+         "preprocessing": {
+            "resize_size": 256,  # It will compute height/width based on resize size
+            "crop_size": 224,
+            "mean": [0.485, 0.456, 0.406],
+            "std": [0.229, 0.224, 0.225],
+            "interpolation": "linear",
+        },
+        "postprocessing": {"class_names": IMAGENET_CLASSES},       
     },
     "mnasnet1_3": {
         "preprocessing": {
