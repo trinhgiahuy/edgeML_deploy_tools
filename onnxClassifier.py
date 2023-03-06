@@ -12,9 +12,12 @@ import dill
 import numbers
 from google.protobuf.json_format import MessageToDict
 import json
+from drawline import draw_rect
 
 from skimage.io import imsave
 # from common_cvinfer import *
+
+timeSleep = 5*60
 
 INTERPOLATIONS = {
     "cubic": cv2.INTER_CUBIC,
@@ -1066,7 +1069,6 @@ except ImportError as e:
 
 if __name__ == "__main__":
 
-    timeSleep = 5*60
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -1138,16 +1140,28 @@ if __name__ == "__main__":
             os.mkdir(drawingResultDir)
     
     # WARM UP MODEL FOR CACHE LOAD
-    for i in range(100):
+    for i in range(10):
         
-        randomDump = np.random.rand(500,500,3)
-        randomDump = Frame(randomDump.astype(np.uint8))
+        # using random input for object detection torchvision models (high version) will yield error
+        # onnxruntime.capi.onnxruntime_pybind11_state.RuntimeException: [ONNXRuntimeError] : 6 : RUNTIME_EXCEPTION : Non-zero status code returned while running Reshape node. Name:'/roi_heads/Reshape' Status Message: /onnxruntime_src/onnxruntime/core/providers/cpu/tensor/reshape_helper.h:36 onnxruntime::ReshapeHelper::ReshapeHelper(const onnxruntime::TensorShape&, onnxruntime::TensorShapeVector&, bool) size != 0 && (input_shape.Size() % size) == 0 was false. The input tensor cannot be reshaped to the requested shape. Input shape:{0,364}, requested shape:{0,-1}
+
+        # randomDump = np.random.rand(500,500,3)
+        # randomDump = Frame(randomDump.astype(np.uint8))
+
+        # assert isImgClassApplication is True or isObjDetectApplication is True
+        # if isImgClassApplication:
+        #     classOut, scoreOut = onnx_model(randomDump)
+        # elif isObjDetectApplication:
+        #     drawingFrameOut = onnx_model(randomDump)
+
+        imgIdx = os.path.join(COCO_verify_dir, f"{i}.jpg")
+        tempImg = Frame(imgIdx)
 
         assert isImgClassApplication is True or isObjDetectApplication is True
         if isImgClassApplication:
-            classOut, scoreOut = onnx_model(randomDump)
+            classOut, scoreOut = onnx_model(tempImg)
         elif isObjDetectApplication:
-            drawingFrameOut = onnx_model(randomDump)
+            drawingFrameOut = onnx_model(tempImg)
     
     logger.info("Finish warm up model. Sleep for 5 minutes before benchmarking...")
     t.sleep(timeSleep)
@@ -1170,7 +1184,7 @@ if __name__ == "__main__":
             assert os.path.exists(drawingResultDir)
             imgPath = os.path.join(drawingResultDir, f"{i}.jpg")
             # logger.warning(imgPath)
-            imsave(imgPath, drawingFrameOut)
+            # imsave(imgPath, drawingFrameOut)
         else:
             logger.warning("At least one application must be specified")
 

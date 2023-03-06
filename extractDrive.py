@@ -39,7 +39,7 @@ def downloadApplicationsModel(name: str, application: str, prefix: str):
     # applicationModelURL = JetsonNanoLinkDrive[name]
 
     # For Jetson Tx2 using this line
-    applicationModelURL = JetsonTX2LinkDrive[name]
+    # applicationModelURL = JetsonTX2LinkDrive[name]
 
     logger.info(f"Extracting model: {name} ... from {applicationModelURL}")
 
