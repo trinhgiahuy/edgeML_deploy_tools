@@ -79,10 +79,13 @@ JetsonNanoLinkDrive = {
     "ssdlite320_mobilenet_v3_large": "https://drive.google.com/u/2/uc?id=1BCneFf2fOYJumSjq4IS5iV4vN6w7kaV7",
 }
 
+JetsonTX2LinkDrive={
+    "alexnet":"https://drive.google.com/u/2/uc?id=1EQ4EUmzO_z-btbYL8WoanHTjsdfoW-7N"
+}
+
 
 def getImageClassModelList():
     return imageClassModelName
-
 
 def getObjectDetectModelList():
     return objectDetectModelName
