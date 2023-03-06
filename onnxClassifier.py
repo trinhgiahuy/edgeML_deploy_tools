@@ -1049,7 +1049,7 @@ def ObjectDetectPostProcess(frame_batch: Frame, model_output, config: dict):
 
 
 try:
-    import onnxruntime as rt
+    import onnxruntime as ORT
 except ImportError as e:
     raise ImportError(f"Please install onnx and onnxruntime first. {e}")
 
