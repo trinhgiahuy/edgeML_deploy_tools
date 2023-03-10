@@ -690,7 +690,7 @@ class ObjectDetectOnnxModel:
         assert os.path.exists(postprocess_file)
         with open(postprocess_file, "rb") as fid:
             self.postprocess_function = dill.load(fid)
-
+        
         # load onnx model from onnx_path
         avail_providers = ORT.get_available_providers()
         logger.info("all available ExecutionProviders are:")
