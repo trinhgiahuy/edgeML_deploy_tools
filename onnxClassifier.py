@@ -16,8 +16,9 @@ from drawline import draw_rect
 
 from skimage.io import imsave
 # from common_cvinfer import *
-
+YOLOV5_MODEL_LIST=['yolov5n','yolov5n6','yolov5s','yolov5s6','yolov5m','yolov5m6']
 timeSleep = 5*60
+deviceSet = "cpu"               # Default device for YOLOV5, other is gpu
 
 INTERPOLATIONS = {
     "cubic": cv2.INTER_CUBIC,
@@ -777,11 +778,25 @@ class customObjectDetectOnnxModel:
             logger.info(f"\t {provider}")
 
         logger.info(f"trying to run with execution provider: {execution_provider}")
-        startLoadEngine = time()
-        onnx_path = preprocess_file.replace(".preprocess", ".onnx")
-        self.session = ORT.InferenceSession(onnx_path, providers=[execution_provider,],)
-        self.engineTime = time() - startLoadEngine
-        self.input_name = self.session.get_inputs()[0].name
+        
+        modelName = onnx_path.split('/')[-1].split('.')[0]
+        logger.info(f"ModelName: {modelName}")
+        if modelName in YOLOV5_MODEL_LIST:
+            from cvu.detector.yolov5 import Yolov5 as Yolov5Onnx
+            self.session = Yolov5Onnx(
+                classes="coco",
+                backend="onnx",
+                weight=onnx_path,
+                device=deviceSet
+            )
+            self.isYOLOv5 = True
+        else:
+            startLoadEngine = time()
+            onnx_path = preprocess_file.replace(".preprocess", ".onnx")
+            self.session = ORT.InferenceSession(onnx_path, providers=[execution_provider,],)
+            self.engineTime = time() - startLoadEngine
+            self.input_name = self.session.get_inputs()[0].name
+            self.isYOLOv5 = False
 
         # load config from json file
         # config_path is a json file
@@ -816,22 +831,35 @@ class customObjectDetectOnnxModel:
         preProcessTime = time()
         self.preProcessTime = preProcessTime - start
 
-        # compute ONNX Runtime output prediction
-        ort_inputs = {self.input_name: model_input}
-        # model_output here shape example (1,1,25,13,13)
-        model_output = self.session.run(None, ort_inputs)
-        inferenceTime = time()
-        self.inferenceTime = inferenceTime - preProcessTime
+       # compute ONNX Runtime output prediction
+        if self.isYOLOv5:
+            # For YOLOv5 models
+            ort_input = model_input
+            model_output = self.session(ort_input)
+            inferenceTime = time()
+            self.inferenceTime = inferenceTime - preProcessTime
 
-        # calling postprocess
-        drawingFrameData = self.postprocess_function(
-            model_output[0][0], self.frameToDraw, self.config["postprocessing"]
-        )
-        postProcessTime = time()
-        self.postProcessTime = postProcessTime - inferenceTime
+            drawingFrameData = self.postprocess_function(
+                model_output,self.frameToDraw, self.config["postprocessing"]
+            )
+            postProcessTime = time()
+            self.postProcessTime = postProcessTime - inferenceTime
+
+        else:
+            ort_inputs = {self.input_name: model_input}
+            # model_output here shape example (1,1,25,13,13)
+            model_output = self.session.run(None, ort_inputs)
+            inferenceTime = time()
+            self.inferenceTime = inferenceTime - preProcessTime
+
+            # calling postprocess
+            drawingFrameData = self.postprocess_function(
+                model_output[0][0], self.frameToDraw, self.config["postprocessing"]
+            )
+            postProcessTime = time()
+            self.postProcessTime = postProcessTime - inferenceTime
 
         return drawingFrameData
-
 
 def ImgClassPreProcess(frame: Frame, config: dict):
     # --------------- ALL IMPORTS GO HERE -------------------------------------
