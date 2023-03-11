@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # SETTING FOR EXECUTION
-numIteration=5000
+numIteration=1
 
 application=$1
 prefix=$2
@@ -33,6 +33,11 @@ fi
 if [ "$application" = "object_detect_custom" ]; then
     arrModelList=`python -c 'from constant import *; print(" ".join(getObjectDetectCustomModelList()))'`
 fi
+
+if [ "$application" = "object_detect_yolox" ]; then
+    arrModelList=`python -c 'from constant import *; print(" ".join(getYOLOXObjectDetectModelList()))'`
+fi
+
 
 
 echo $arrModelList
