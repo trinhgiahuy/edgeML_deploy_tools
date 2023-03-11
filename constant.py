@@ -127,7 +127,9 @@ JetsonTX2LinkDrive={
     "fasterrcnn_mobilenet_v3_large_fpn":"",
     "fasterrcnn_mobilenet_v3_large_320_fpn":"",
     "ssd300_vgg16":"",
-    "ssdlite320_mobilenet_v3_large":""
+    "ssdlite320_mobilenet_v3_large":"",
+
+    "yolov5n":"https://drive.google.com/u/2/uc?id=1DxIJ6mLYedHTBS5XO8XshwGeIrzQNn-Q"
 }
 
 execProvider = [
