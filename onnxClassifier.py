@@ -17,7 +17,9 @@ from drawline import draw_rect
 from skimage.io import imsave
 # from common_cvinfer import *
 YOLOV5_MODEL_LIST=['yolov5n','yolov5n6','yolov5s','yolov5s6','yolov5m','yolov5m6']
-timeSleep = 5*60
+YOLOX_MODEL_LIST =['yolox_nano','yolox_tiny','yolox_s']
+
+timeSleep = 1
 deviceSet = "cpu"               # Default device for YOLOV5, other is gpu
 
 INTERPOLATIONS = {
@@ -861,6 +863,100 @@ class customObjectDetectOnnxModel:
 
         return drawingFrameData
 
+class yoloxObjectDetectOnnxModel:
+
+    def __init__(self, onnx_path, execution_provider="CPUExecutionProvider"):
+        # Load time recorder
+        self.preProcessTime = 0.0
+        self.inferenceTime = 0.0
+        self.postProcessTime = 0.0
+        self.engineTime = 0.0
+        # load preprocessing function
+        preprocess_file = onnx_path.replace(".onnx", ".preprocess")
+        # preprocess_file="/home/user/datTran/submission/testCVInfer/deploy/object_detect_custom_onnx/tinyYOLOv2.preprocess"
+        assert os.path.exists(preprocess_file)
+        with open(preprocess_file, "rb") as fid:
+            self.preprocess_function = dill.load(fid)
+
+        # similarly, load postprocessing
+        # postprocess_file=preprocess_file.replace(".preprocess",".postprocess")
+        postprocess_file = onnx_path.replace(".onnx", ".postprocess")
+        logger.warning(postprocess_file)
+        assert os.path.exists(postprocess_file)
+        with open(postprocess_file, "rb") as fid:
+            self.postprocess_function = dill.load(fid)
+
+        # load onnx model from onnx_path
+        avail_providers = ORT.get_available_providers()
+        logger.info("all available ExecutionProviders are:")
+        for idx, provider in enumerate(avail_providers):
+            logger.info(f"\t {provider}")
+
+        logger.info(f"trying to run with execution provider: {execution_provider}")
+        
+        modelName = onnx_path.split('/')[-1].split('.')[0]
+        logger.info(f"ModelName: {modelName}")
+
+        startLoadEngine = time()
+        onnx_path = preprocess_file.replace(".preprocess", ".onnx")
+        self.session = ORT.InferenceSession(onnx_path, providers=[execution_provider,],)
+        self.engineTime = time() - startLoadEngine
+        self.input_name = self.session.get_inputs()[0].name
+  
+        # load config from json file
+        # config_path is a json file
+        config_file = onnx_path.replace(".onnx", ".configuration.json")
+        assert os.path.exists(config_file)
+        with open(config_file, "r") as fid:
+            # self.config is a dictionary
+            self.config = json.loads(fid.read())
+
+    @logger.catch
+    def preprocess(self, image):
+        return self.preprocess_function(image,config, self.config["preprocessing"])
+
+    @logger.catch
+    def postprocess(self, model_output, image, meta_data):
+        return self.postprocess_function(
+            model_output, image, self.config["postprocessing"],meta_data
+        )
+
+    @logger.catch
+    def __call__(self, cv2Img):
+
+        # Create meta_data for temporty isage
+        self.meta_data = {}
+        height_after = self.config["preprocessing"]["new_height"]
+        width_after = self.config["preprocessing"]["new_width"]
+
+        self.meta_data['height_after'] = height_after
+        self.meta_data['width_after'] = width_after
+
+        # logger.info(self.meta_data)
+
+        # calling preprocess
+        start = time()
+        model_input, self.meta_data['resize_ratio'] = self.preprocess_function(
+            cv2Img, self.config["preprocessing"]
+        )
+        preProcessTime = time()
+        self.preProcessTime = preProcessTime - start
+       # compute ONNX Runtime output prediction
+        ort_inputs = {self.input_name: model_input[None, :, :, :]}
+        # model_output here shape example (1,1,25,13,13)
+        model_output = self.session.run(None, ort_inputs)
+        inferenceTime = time()
+        self.inferenceTime = inferenceTime - preProcessTime
+
+        # calling postprocess
+        drawingFrameData = self.postprocess_function(
+            model_output, cv2Img, self.config["postprocessing"],self.meta_data
+        )
+        postProcessTime = time()
+        self.postProcessTime = postProcessTime - inferenceTime
+
+        return drawingFrameData
+
 def ImgClassPreProcess(frame: Frame, config: dict):
     # --------------- ALL IMPORTS GO HERE -------------------------------------
     # -------------------------------------------------------------------------
@@ -1147,6 +1243,7 @@ if __name__ == "__main__":
 
     isImgClassApplication = False
     isObjDetectApplication = False
+    isYOLOXRunning = False
     if application == "image_class":
         onnx_model = ImgClassOnnxModel(onnx_path=modelOnnxPathName)
         isImgClassApplication = True
@@ -1158,6 +1255,9 @@ if __name__ == "__main__":
         logger.warning(modelOnnxPathName)
         onnx_model = customObjectDetectOnnxModel(onnx_path=modelOnnxPathName)
         isObjDetectApplication = True
+    elif application == "object_detect_yolox":
+        onnx_model = yoloxObjectDetectOnnxModel(onnx_path=modelOnnxPathName)
+        isYOLOXRunning = True
 
     if isObjDetectApplication:
         drawingResultDir = f"{cwd}/drawingRes/{modelFn}"
@@ -1183,13 +1283,16 @@ if __name__ == "__main__":
         #     drawingFrameOut = onnx_model(randomDump)
 
         imgIdx = os.path.join(COCO_verify_dir, f"{i}.jpg")
+        cv2Img = cv2.imread(imgIdx)
         tempImg = Frame(imgIdx)
 
-        assert isImgClassApplication is True or isObjDetectApplication is True
+        assert isImgClassApplication is True or isObjDetectApplication is True or isYOLOXRunning is True
         if isImgClassApplication:
             classOut, scoreOut = onnx_model(tempImg)
         elif isObjDetectApplication:
             drawingFrameOut = onnx_model(tempImg)
+        elif isYOLOXRunning:
+            drawingFrameOut = onnx_model(cv2Img)
     
     logger.info("Finish warm up model. Sleep for 5 minutes before benchmarking...")
     t.sleep(timeSleep)
@@ -1199,9 +1302,10 @@ if __name__ == "__main__":
     engineLoadTime = onnx_model.engineTime
     for i in tqdm(range(numIteration)):
         imgIdx = os.path.join(COCO_verify_dir, f"{i}.jpg")
-        tempImg = Frame(imgIdx)
+        tempImg = Frame(imgIdx) 
+        cv2Img = cv2.imread(imgIdx)
 
-        assert isImgClassApplication is True or isObjDetectApplication is True
+        assert isImgClassApplication is True or isObjDetectApplication is True or isYOLOXRunning is True
         if isImgClassApplication:
             classOut, scoreOut = onnx_model(tempImg)
             scoreClasstDict[classOut] = scoreOut
@@ -1213,6 +1317,10 @@ if __name__ == "__main__":
             imgPath = os.path.join(drawingResultDir, f"{i}.jpg")
             # logger.warning(imgPath)
             # imsave(imgPath, drawingFrameOut)
+        elif isYOLOXRunning:
+            # For YOLOX models
+            drawingFrameOut = onnx_model(cv2Img)
+
         else:
             logger.warning("At least one application must be specified")
 
