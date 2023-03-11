@@ -46,7 +46,14 @@ customobjectDetectModelName = [
     'yolov5s',
     'yolov5s6',
     'yolov5m',
-    'yolov5m6']
+    'yolov5m6'
+]
+
+YOLOXObjectDetectOnnxModelName = [
+    'yolox_nano',
+    'yolox_tiny',
+    'yolox_s'
+]
 
 modelLinkDrive = {
     "alexnet": "https://drive.google.com/u/2/uc?id=1FPfEM7T1lXfezz_9jWY0jnp4KBq16wrz",
@@ -79,12 +86,18 @@ modelLinkDrive = {
     "ssdlite320_mobilenet_v3_large": "https://drive.google.com/u/2/uc?id=14qxtYiZ6euKSYRgePFK4XI9UQAaopvCO",
     "tinyYOLOv2": "https://drive.google.com/u/2/uc?id=1viejka4pVIKRsHCsd3ljvkParN9DxQ8r",
     
-"yolov5n": "https://drive.google.com/u/2/uc?id=1U8yozXeRBwaAoSwQPcBHguvqduBtNfJR",
+    "yolov5n": "https://drive.google.com/u/2/uc?id=1U8yozXeRBwaAoSwQPcBHguvqduBtNfJR",
     "yolov5s": "https://drive.google.com/u/2/uc?id=1CtLFTjVQeYso3tb074PZEmo-NouZQWWQ",
     "yolov5m": "https://drive.google.com/u/2/uc?id=1fir_93j-9kqeAxT6ZMN6qcGwmP-LUkmB",
     "yolov5n6": "https://drive.google.com/u/2/uc?id=1GQHHd7_QKjWhU4H4Sk8qDN5xAnsOqqaP",
     "yolov5s6":"https://drive.google.com/u/2/uc?id=1_OtkKu1FWgLU5IicPE__3aok0pzueYno",
-    "yolov5m6":"https://drive.google.com/u/2/uc?id=16e9tS1a_wPFXmn8YLMc0MVnm034Q_anI"
+    "yolov5m6":"https://drive.google.com/u/2/uc?id=16e9tS1a_wPFXmn8YLMc0MVnm034Q_anI",
+
+    "yolox_nano": "https://drive.google.com/u/2/uc?id=1a8oy7feGtl3G1FhBO3c82ZAkIUaQ5uKx",
+    "yolox_tiny": "https://drive.google.com/u/2/uc?id=1SLX-36DVvwPxAG7HkKWdZRoMU2hWpYJ5",
+    "yolox_s" : "https://drive.google.com/u/2/uc?id=1UjYOqulLo8uMih7ViZhaMTfKBcT5w60K"
+
+
 }
 
 JetsonNanoLinkDrive = {
@@ -128,3 +141,6 @@ def getObjectDetectModelList():
     
 def getObjectDetectCustomModelList():
     return customobjectDetectModelName
+
+def getYOLOXObjectDetectModelList():
+    return YOLOXObjectDetectOnnxModelName
