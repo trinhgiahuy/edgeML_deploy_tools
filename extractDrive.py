@@ -33,13 +33,13 @@ def downloadCOCO():
 
 
 def downloadApplicationsModel(name: str, application: str, prefix: str):
-    #applicationModelURL = modelLinkDrive[name]
+    applicationModelURL = modelLinkDrive[name]
 
     # For jetson Nano using this line
     # applicationModelURL = JetsonNanoLinkDrive[name]
 
     # For Jetson Tx2 using this line
-    applicationModelURL = JetsonTX2LinkDrive[name]
+    # applicationModelURL = JetsonTX2LinkDrive[name]
 
     logger.info(f"Extracting model: {name} ... from {applicationModelURL}")
 
@@ -105,3 +105,7 @@ if __name__ == "__main__":
         for name in customobjectDetectModelName:
             downloadApplicationsModel(name=name, application=application, prefix=prefix)
 
+    if application == "object_detect_yolox":
+        for name in YOLOXObjectDetectOnnxModelName:
+            logger.warning(f"Get name {name}")
+            downloadApplicationsModel(name=name, application=application, prefix=prefix)
