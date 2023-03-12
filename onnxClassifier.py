@@ -21,6 +21,8 @@ YOLOX_MODEL_LIST =['yolox_nano','yolox_tiny','yolox_s']
 
 timeSleep = 1
 deviceSet = "cpu"               # Default device for YOLOV5, other is gpu
+# ["CPUExecutionProvider", "CUDAExecutionProvider"]
+execProvider = "CUDAExecutionProvider"
 
 INTERPOLATIONS = {
     "cubic": cv2.INTER_CUBIC,
@@ -1245,18 +1247,18 @@ if __name__ == "__main__":
     isObjDetectApplication = False
     isYOLOXRunning = False
     if application == "image_class":
-        onnx_model = ImgClassOnnxModel(onnx_path=modelOnnxPathName)
+        onnx_model = ImgClassOnnxModel(onnx_path=modelOnnxPathName,execution_provider=execProvider)
         isImgClassApplication = True
 
     elif application == "object_detect":
-        onnx_model = ObjectDetectOnnxModel(onnx_path=modelOnnxPathName)
+        onnx_model = ObjectDetectOnnxModel(onnx_path=modelOnnxPathName,execution_provider=execProvider)
         isObjDetectApplication = True
     elif application == "object_detect_custom":
         logger.warning(modelOnnxPathName)
-        onnx_model = customObjectDetectOnnxModel(onnx_path=modelOnnxPathName)
+        onnx_model = customObjectDetectOnnxModel(onnx_path=modelOnnxPathName,execution_provider=execProvider)
         isObjDetectApplication = True
     elif application == "object_detect_yolox":
-        onnx_model = yoloxObjectDetectOnnxModel(onnx_path=modelOnnxPathName)
+        onnx_model = yoloxObjectDetectOnnxModel(onnx_path=modelOnnxPathName,execution_provider=execProvider)
         isYOLOXRunning = True
 
     if isObjDetectApplication:
