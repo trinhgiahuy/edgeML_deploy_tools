@@ -20,7 +20,8 @@ from skimage.io import imsave
 YOLOV5_MODEL_LIST=['yolov5n','yolov5n6','yolov5s','yolov5s6','yolov5m','yolov5m6']
 YOLOX_MODEL_LIST =['yolox_nano','yolox_tiny','yolox_s']
 
-timeSleep = 1
+cachedEnable = 1
+timeSleep = 10*60
 deviceSet = "cpu"               # Default device for YOLOV5, other is gpu
 # ["CPUExecutionProvider", "CUDAExecutionProvider"]
 execProvider = "CPUExecutionProvider"
@@ -1246,37 +1247,26 @@ if __name__ == "__main__":
             os.mkdir(drawingResultDir)
     
     # WARM UP MODEL FOR CACHE LOAD
-    for i in range(1):
-        
-        # using random input for object detection torchvision models (high version) will yield error
-        # onnxruntime.capi.onnxruntime_pybind11_state.RuntimeException: [ONNXRuntimeError] : 6 : RUNTIME_EXCEPTION : Non-zero status code returned while running Reshape node. Name:'/roi_heads/Reshape' Status Message: /onnxruntime_src/onnxruntime/core/providers/cpu/tensor/reshape_helper.h:36 onnxruntime::ReshapeHelper::ReshapeHelper(const onnxruntime::TensorShape&, onnxruntime::TensorShapeVector&, bool) size != 0 && (input_shape.Size() % size) == 0 was false. The input tensor cannot be reshaped to the requested shape. Input shape:{0,364}, requested shape:{0,-1}
+    if cachedEnable:
+        for i in range(100):
+            
+            imgIdx = os.path.join(COCO_verify_dir, f"{i}.jpg")
+            cv2Img = cv2.imread(imgIdx)
+            tempImg = Frame(imgIdx)
 
-        # randomDump = np.random.rand(500,500,3)
-        # randomDump = Frame(randomDump.astype(np.uint8))
+            assert isImgClassApplication is True \
+            or isObjDetectApplication is True \
+            or isYOLOXRunning is True \
+            or isHumanPoseApplication is True
 
-        # assert isImgClassApplication is True or isObjDetectApplication is True
-        # if isImgClassApplication:
-        #     classOut, scoreOut = onnx_model(randomDump)
-        # elif isObjDetectApplication:
-        #     drawingFrameOut = onnx_model(randomDump)
-
-        imgIdx = os.path.join(COCO_verify_dir, f"{i}.jpg")
-        cv2Img = cv2.imread(imgIdx)
-        tempImg = Frame(imgIdx)
-
-        assert isImgClassApplication is True \
-        or isObjDetectApplication is True \
-        or isYOLOXRunning is True \
-        or isHumanPoseApplication is True
-
-        if isImgClassApplication:
-            classOut, scoreOut = onnx_model(tempImg)
-        elif isObjDetectApplication:
-            drawingFrameOut = onnx_model(tempImg)
-        elif isYOLOXRunning:
-            drawingFrameOut = onnx_model(cv2Img)
-        elif isHumanPoseApplication:
-            dumpOut = onnx_model(tempImg,cv2Img)    
+            if isImgClassApplication:
+                classOut, scoreOut = onnx_model(tempImg)
+            elif isObjDetectApplication:
+                drawingFrameOut = onnx_model(tempImg)
+            elif isYOLOXRunning:
+                drawingFrameOut = onnx_model(cv2Img)
+            elif isHumanPoseApplication:
+                dumpOut = onnx_model(tempImg,cv2Img)    
 
     scoreClasstDict = {}
     timeBenchmarkList = []
@@ -1336,6 +1326,8 @@ if __name__ == "__main__":
     # timeBenchmarkDF = pd.DataFrame(timeBenchmarkArr)
     # timeBenchmarkDF.to_csv(output_dir, header=False, index=False)
     np.savetxt(output_dir, timeBenchmarkArr, delimiter=",")
-    print(f"Finish exporting result to file {csvFileOut}. Sleeping for 5 mins...")
+    print(f"Finish exporting result to file {csvFileOut}.")
 
-    t.sleep(timeSleep)
+    if cachedEnable:
+        logger.info("Cache enabled. Sleeping for 10 mins...")
+        t.sleep(timeSleep)
