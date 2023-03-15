@@ -72,6 +72,7 @@ modelLinkDrive = {
     "mobilenet_v3_large":"https://drive.google.com/u/2/uc?id=13FrrsBTH9wvLFWPBPEgkkAinUg35sZDJ",
     "mnasnet0_5":"https://drive.google.com/u/2/uc?id=1yhxMtKafHwTC23cwyqIbGnCNzwNzXLGs",
     "mnasnet0_75":"https://drive.google.com/u/2/uc?id=1FVZylLcnsU4NWCujk2WiGZ0geh18JH9m",
+    "mnasnet1_0":"https://drive.google.com/u/2/uc?id=1mtRGQhOS7S_AEBMtLuP6dbugdcvjGz4C",
     "mnasnet1_3":"https://drive.google.com/u/2/uc?id=1TJzku6MXIU1jRhHfB_TlCdgi26iQZunt",
     "resnet18":"https://drive.google.com/u/2/uc?id=17m7CuXcnlHkco5CXrNhvOwLVbfpiD4Ix",
 
