@@ -12,9 +12,9 @@ imageClassModelName = [
    "mobilenet_v2",
    "mobilenet_v3_small",
    "mobilenet_v3_large",
-#    "mnasnet0_5",
+    "mnasnet0_5",
    "mnasnet0_75",
-    "mnasnet1_0",
+#    "mnasnet1_0",
    "mnasnet1_3",
    "resnet18",
     # # "resnet50",
@@ -53,6 +53,11 @@ YOLOXObjectDetectOnnxModelName = [
     'yolox_s'
 ]
 
+HumanPoseOnnxModelName = [
+    'lightweightHumanPose'
+]
+
+# For Pi3/4
 modelLinkDrive = {
     "alexnet": "https://drive.google.com/u/2/uc?id=1FPfEM7T1lXfezz_9jWY0jnp4KBq16wrz",
     "googlenet":"https://drive.google.com/u/2/uc?id=1s9BH24hhzZBwWlzqZNicQuRrqRlIqO8f",
@@ -93,9 +98,9 @@ modelLinkDrive = {
 
     "yolox_nano": "https://drive.google.com/u/2/uc?id=1a8oy7feGtl3G1FhBO3c82ZAkIUaQ5uKx",
     "yolox_tiny": "https://drive.google.com/u/2/uc?id=1SLX-36DVvwPxAG7HkKWdZRoMU2hWpYJ5",
-    "yolox_s" : "https://drive.google.com/u/2/uc?id=1UjYOqulLo8uMih7ViZhaMTfKBcT5w60K"
+    "yolox_s" : "https://drive.google.com/u/2/uc?id=1UjYOqulLo8uMih7ViZhaMTfKBcT5w60K",
 
-
+    "lightweightHumanPose": "https://drive.google.com/u/2/uc?id=1G-RCf8A-tmM0yOMHG54cLP15g2Yvf6Dn"
 }
 
 JetsonNanoLinkDrive = {
@@ -151,3 +156,6 @@ def getObjectDetectCustomModelList():
 
 def getYOLOXObjectDetectModelList():
     return YOLOXObjectDetectOnnxModelName
+
+def getHumanPoseModelList():
+    return HumanPoseOnnxModelName

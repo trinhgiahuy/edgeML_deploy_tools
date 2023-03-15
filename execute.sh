@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # SETTING FOR EXECUTION
-numIteration=1
+numIteration=5000
 
 application=$1
 prefix=$2
@@ -11,7 +11,7 @@ prefix=$2
 # python -c 'from extractDrive import *; print(downloadCIFAR())'
 
 # Download COCO dataset
-python -c 'from  extractDrive import *; print(downloadCOCO())'
+# python -c 'from  extractDrive import *; print(downloadCOCO())'
 
 
 # echo $arrModelList
@@ -36,6 +36,10 @@ fi
 
 if [ "$application" = "object_detect_yolox" ]; then
     arrModelList=`python -c 'from constant import *; print(" ".join(getYOLOXObjectDetectModelList()))'`
+fi
+
+if [ "$application" = "human_pose" ]; then
+    arrModelList=`python -c 'from constant import *; print(" ".join(getHumanPoseModelList()))'`
 fi
 
 

@@ -13,7 +13,8 @@ import numbers
 from google.protobuf.json_format import MessageToDict
 import json
 from drawline import draw_rect
-
+import math
+from operator import itemgetter
 from skimage.io import imsave
 # from common_cvinfer import *
 YOLOV5_MODEL_LIST=['yolov5n','yolov5n6','yolov5s','yolov5s6','yolov5m','yolov5m6']
@@ -22,7 +23,7 @@ YOLOX_MODEL_LIST =['yolox_nano','yolox_tiny','yolox_s']
 timeSleep = 1
 deviceSet = "cpu"               # Default device for YOLOV5, other is gpu
 # ["CPUExecutionProvider", "CUDAExecutionProvider"]
-execProvider = "CUDAExecutionProvider"
+execProvider = "CPUExecutionProvider"
 
 INTERPOLATIONS = {
     "cubic": cv2.INTER_CUBIC,
@@ -31,6 +32,109 @@ INTERPOLATIONS = {
     "area": cv2.INTER_AREA,
     "lanczos": cv2.INTER_LANCZOS4,
 }
+
+Pose_num_kpt = 18
+
+BODY_PARTS_KPT_IDS = [[1, 2], [1, 5], [2, 3], [3, 4], [5, 6], [6, 7], [1, 8], [8, 9], [9, 10], [1, 11],
+                      [11, 12], [12, 13], [1, 0], [0, 14], [14, 16], [0, 15], [15, 17], [2, 16], [5, 17]]
+BODY_PARTS_PAF_IDS = ([12, 13], [20, 21], [14, 15], [16, 17], [22, 23], [24, 25], [0, 1], [2, 3], [4, 5],
+                      [6, 7], [8, 9], [10, 11], [28, 29], [30, 31], [34, 35], [32, 33], [36, 37], [18, 19], [26, 27])
+
+def get_alpha(rate=30, cutoff=1):
+    tau = 1 / (2 * math.pi * cutoff)
+    te = 1 / rate
+    return 1 / (1 + tau / te)
+
+class LowPassFilter:
+    def __init__(self):
+        self.x_previous = None
+
+    def __call__(self, x, alpha=0.5):
+        if self.x_previous is None:
+            self.x_previous = x
+            return x
+        x_filtered = alpha * x + (1 - alpha) * self.x_previous
+        self.x_previous = x_filtered
+        return x_filtered
+
+class OneEuroFilter:
+    def __init__(self, freq=15, mincutoff=1, beta=0.05, dcutoff=1):
+        self.freq = freq
+        self.mincutoff = mincutoff
+        self.beta = beta
+        self.dcutoff = dcutoff
+        self.filter_x = LowPassFilter()
+        self.filter_dx = LowPassFilter()
+        self.x_previous = None
+        self.dx = None
+
+    def __call__(self, x):
+        if self.dx is None:
+            self.dx = 0
+        else:
+            self.dx = (x - self.x_previous) * self.freq
+        dx_smoothed = self.filter_dx(self.dx, get_alpha(self.freq, self.dcutoff))
+        cutoff = self.mincutoff + self.beta * abs(dx_smoothed)
+        x_filtered = self.filter_x(x, get_alpha(self.freq, cutoff))
+        self.x_previous = x
+        return x_filtered
+    
+class Pose:
+    num_kpts = 18
+    kpt_names = ['nose', 'neck',
+                 'r_sho', 'r_elb', 'r_wri', 'l_sho', 'l_elb', 'l_wri',
+                 'r_hip', 'r_knee', 'r_ank', 'l_hip', 'l_knee', 'l_ank',
+                 'r_eye', 'l_eye',
+                 'r_ear', 'l_ear']
+    sigmas = np.array([.26, .79, .79, .72, .62, .79, .72, .62, 1.07, .87, .89, 1.07, .87, .89, .25, .25, .35, .35],
+                      dtype=np.float32) / 10.0
+    vars = (sigmas * 2) ** 2
+    last_id = -1
+    color = [0, 224, 255]
+
+    def __init__(self, keypoints, confidence):
+        super().__init__()
+        self.keypoints = keypoints
+        self.confidence = confidence
+        self.bbox = Pose.get_bbox(self.keypoints)
+        self.id = None
+        self.filters = [[OneEuroFilter(), OneEuroFilter()] for _ in range(Pose_num_kpt)]
+
+    @staticmethod
+    def get_bbox(keypoints):
+        found_keypoints = np.zeros((np.count_nonzero(keypoints[:, 0] != -1), 2), dtype=np.int32)
+        found_kpt_id = 0
+        for kpt_id in range(Pose_num_kpt):
+            if keypoints[kpt_id, 0] == -1:
+                continue
+            found_keypoints[found_kpt_id] = keypoints[kpt_id]
+            found_kpt_id += 1
+        bbox = cv2.boundingRect(found_keypoints)
+        return bbox
+
+    def update_id(self, id=None):
+        self.id = id
+        if self.id is None:
+            self.id = Pose.last_id + 1
+            Pose.last_id += 1
+
+    def draw(self, img):
+        assert self.keypoints.shape == (Pose_num_kpt, 2)
+
+        for part_id in range(len(BODY_PARTS_PAF_IDS) - 2):
+            kpt_a_id = BODY_PARTS_KPT_IDS[part_id][0]
+            global_kpt_a_id = self.keypoints[kpt_a_id, 0]
+            if global_kpt_a_id != -1:
+                x_a, y_a = self.keypoints[kpt_a_id]
+                cv2.circle(img, (int(x_a), int(y_a)), 3, Pose.color, -1)
+            kpt_b_id = BODY_PARTS_KPT_IDS[part_id][1]
+            global_kpt_b_id = self.keypoints[kpt_b_id, 0]
+            if global_kpt_b_id != -1:
+                x_b, y_b = self.keypoints[kpt_b_id]
+                cv2.circle(img, (int(x_b), int(y_b)), 3, Pose.color, -1)
+            if global_kpt_a_id != -1 and global_kpt_b_id != -1:
+                cv2.line(img, (int(x_a), int(y_a)), (int(x_b), int(y_b)), Pose.color, 2)
+
 
 class Point:
     """
@@ -959,234 +1063,100 @@ class yoloxObjectDetectOnnxModel:
 
         return drawingFrameData
 
-def ImgClassPreProcess(frame: Frame, config: dict):
-    # --------------- ALL IMPORTS GO HERE -------------------------------------
-    # -------------------------------------------------------------------------
-    import numpy as np
+class HumanPoseOnnxModel:
+    def __init__(self, onnx_path, execution_provider="CPUExecutionProvider"):
+        # Load time recorder
+        self.preProcessTime = 0.0
+        self.inferenceTime = 0.0
+        self.postProcessTime = 0.0
+        self.engineTime = 0.0
 
-    # --------------- END OF IMPORTS ------------------------------------------
-    # -------------------------------------------------------------------------
+        # load preprocessing function
+        preprocess_file = onnx_path.replace(".onnx", ".preprocess")
+        assert os.path.exists(preprocess_file)
+        with open(preprocess_file, "rb") as fid:
+            self.preprocess_function = dill.load(fid)
 
-    # --------------- ALL VAR SETING------------------------------------------
-    # -------------------------------------------------------------------------
-    config_keys = config.keys()
-    isNormalized = False
-    isResized = False
-    isCenterCroped = False
-    # --------------- END OF VAR SETING------------------------------------------
-    # -------------------------------------------------------------------------
+        # similarly, load postprocessing function
+        postprocess_file = onnx_path.replace(".onnx", ".postprocess")
+        assert os.path.exists(postprocess_file)
+        with open(postprocess_file, "rb") as fid:
+            self.postprocess_function = dill.load(fid)
 
-    meta_data = {
-        "height_before": frame.height(),
-        "width_before": frame.width(),
-    }
+        # load onnx model from onnx_path
+        avail_providers = ORT.get_available_providers()
+        logger.info("all available ExecutionProviders are:")
+        for idx, provider in enumerate(avail_providers):
+            logger.info(f"\t {provider}")
 
-    if "resize_size" in config_keys:
-        isResized = True
-        resize_size = config["resize_size"]
-        new_height, new_width = frame._compute_resized_output_size(
-            new_size=[resize_size]
+        logger.info(f"trying to run with execution provider: {execution_provider}")
+        startLoadEngine = time()
+        self.session = ORT.InferenceSession(onnx_path, providers=[execution_provider,],)
+        self.engineTime = time() - startLoadEngine
+
+        self.input_name = self.session.get_inputs()[0].name
+
+        # load config from json file
+        # config_path is a json file
+        config_file = onnx_path.replace(".onnx", ".configuration.json")
+        assert os.path.exists(config_file)
+        with open(config_file, "r") as fid:
+            # self.config is a dictionary
+            self.config = json.loads(fid.read())
+
+    @logger.catch
+    def getEngineTime(self):
+        return self.engineTime
+
+    @logger.catch
+    def getpreProcessTime(self):
+        return self.preProcessTime
+
+    @logger.catch
+    def getinferenceTime(self):
+        return self.getinferenceTime
+
+    @logger.catch
+    def getpostProcessTime(self):
+        return self.postProcessTime
+
+    @logger.catch
+    def preprocess(self, frame: Frame):
+        # input must be a frame
+        assert isinstance(frame, Frame)
+        return self.preprocess_function(frame, self.config["preprocessing"])
+
+    @logger.catch
+    def postprocess(self, model_output):
+        return self.postprocess_function(model_output, self.config["postprocessing"])
+
+    @logger.catch
+    def __call__(self, frame: Frame, cv2Img):
+        # input must be a frame
+        assert isinstance(frame, Frame)
+
+        # calling preprocess
+        start = time()
+        model_input,  self.meta_data = self.preprocess_function(
+            frame, self.config["preprocessing"]
         )
-        # logger.info(
-        #     f"Resizing frame into new_height {new_height} and new_width {new_width}"
-        # )
-        frame = frame.img_class_resize(
-            new_height=new_height, new_width=new_width, keep_ratio=True
+        preProcessTime = time()
+        self.preProcessTime = preProcessTime - start
+
+        # compute ONNX Runtime output prediction
+        ort_inputs = {self.input_name: model_input}
+        model_output = self.session.run(None, ort_inputs)
+        inferenceTime = time()
+        self.inferenceTime = inferenceTime - preProcessTime
+        
+        # calling postprocess
+        # dump counter 
+        counter=0
+        dumpOut = self.postprocess_function(
+            model_output, cv2Img, self.meta_data, self.config["postprocessing"],counter
         )
-        # logger.info(f"After resize size: {frame.shape()}")
-
-    if "crop_size" in config_keys:
-        isCenterCroped = True
-        # logger.warning(f'Transposing frame into CHW before center crop')
-        # frame.to_CHW()
-
-        crop_size = config["crop_size"]
-        # logger.info(f"Center crop frame into {crop_size}")
-        frame = frame.center_crop([crop_size])
-        # logger.info(f"After center crop size: {frame.shape()}")
-
-    if isCenterCroped:
-        meta_data["height_after"] = crop_size
-        meta_data["width_after"] = crop_size
-    elif isResized:
-        meta_data["height_after"] = new_height
-        meta_data["width_after"] = new_width
-    else:
-        meta_data["height_after"] = None
-        meta_data["width_after"] = None
-
-    if "mean" in config_keys and "std" in config_keys:
-        # Call normalized here first
-        # Image classification application, all torch models requires scaled to [0,1] before normalized
-        rescaled_input = frame.get_rescaled_range_0_1_output()
-        isNormalized = True
-
-        # logger.warning(f"Returning normalized NDarray. Not Frame object")
-        # logger.info(f"Get normalized ND array")
-        mean = config["mean"]
-        std = config["std"]
-        # logger.info(f"[Before norm] Channel order {frame.shape()}")
-        norm_output = frame.get_normalized_output(
-            rescaled_input=rescaled_input, mean=mean, std=std
-        )  # norm_output shape (C,H,W)
-
-    if isNormalized:
-        output = np.ascontiguousarray(norm_output, dtype=np.float32)
-        meta_data["mean"] = mean
-        meta_data["std"] = std
-    else:
-        ## TODO: Verify this code since if it is not normalized, then it has be convert to C-H-W ??
-        frame.to_CHW()  # Frame here is C-H-W
-        output = np.ascontiguousarray(frame.data(), dtype=np.float32)
-
-    ## TODO ? Check if we need to store ratio in resize
-    # metadata['resize_ratio'] = ratio
-
-    output = np.expand_dims(output, axis=0)
-
-    # Output return arranged in B-C-H-W
-    return output, crop_size, meta_data
-
-
-def ImaClassPostProcess(model_output, config: dict):
-    def softmax(x, axis=None):
-        # Subtract the maximum value for numerical stability
-        x = x - np.max(x, axis=axis, keepdims=True)
-        # Compute the exponential of all elements in the input array
-        exp_x = np.exp(x)
-        # Compute the sum of exponential values along the specified axis
-        sum_exp_x = np.sum(exp_x, axis=axis, keepdims=True)
-        # Divide each element by the sum of exponential values
-        return exp_x / sum_exp_x
-
-    class_id_list = config["class_names"]
-    prediction = softmax(np.squeeze(model_output[0]))
-    # logger.info(prediction.shape)
-    class_id = prediction.argmax().item()
-    score = prediction[class_id].item()
-    categoryName = class_id_list[class_id]
-
-    return categoryName, score
-
-
-def dummyMaxMin(dummyInputFrame: Frame, config: dict):
-    """
-    This fuction resize the dummy input into to max_size/min_size from
-    model default values for onnx's compatible input.
-    Using torchvision transform functional for compatible with torch.onnx.export
-    """
-    from torchvision.transforms.functional import to_tensor
-
-    config = config["preprocessing"]
-    # if "min_size" in config.keys() and "max_size" in config.keys():
-    min_size = config["min_size"]
-    max_size = config["max_size"]
-
-    resizeDummy = dummyInputFrame.resize(new_height=min_size, new_width=max_size)
-
-    return to_tensor(resizeDummy.data())
-
-
-def ObjectDetectPreProcess(frame: Frame, config: dict):
-    """
-    This fucntion only resize the Frame image to max_size/min_size from
-    model default values for onnx's compatible input
-    """
-    # --------------- ALL IMPORTS GO HERE -------------------------------------
-    # -------------------------------------------------------------------------
-    import numpy as np
-
-    # --------------- END OF IMPORTS ------------------------------------------
-    # -------------------------------------------------------------------------
-
-    # --------------- ALL VAR SETING------------------------------------------
-    # -------------------------------------------------------------------------
-    config_keys = config.keys()
-    isRescaled01 = False
-
-    meta_data = {
-        "height_before": frame.height(),
-        "width_before": frame.width(),
-    }
-
-    if "min_size" in config_keys and "max_size" in config_keys:
-        min_size = config["min_size"]
-        max_size = config["max_size"]
-        frame = frame.resize(new_height=min_size, new_width=max_size)
-
-    if "rescaled_01" in config_keys:
-        # logger.info("Rescale image to range [0,1]")
-        isRescaled01 = True
-
-        # get_rescaled_range_0_1_output will return NDArray with channel (C,H,W)
-        rescaled_01_output = frame.get_rescaled_range_0_1_output()
-
-    if isRescaled01:
-        meta_data["rescaled_01"] = True
-
-    output = np.ascontiguousarray(rescaled_01_output, dtype=np.float32)
-    output = np.expand_dims(output, axis=0)
-    # output = np.expand_dims(np.transpose())
-
-    return output.astype(np.float32)
-
-
-def ObjectDetectPostProcess(frame_batch: Frame, model_output, config: dict):
-
-    # logger.info(config)
-    box_coord = model_output[0]
-
-    isLabelLast = config["label_last"]
-    if isLabelLast:
-        label_arr = model_output[2]
-        confidence_arr = model_output[1]
-    else:
-        label_arr = model_output[1]
-        confidence_arr = model_output[2]
-
-    box_coord_shape = np.shape(box_coord)
-    box_row = box_coord_shape[0]
-    boundingBoxList = []
-    frame_batch = np.transpose(frame_batch[0], (1, 2, 0))
-    frame_batch *= 255
-    # logger.info(frame_batch)
-    drawingFrame = Frame(frame_batch.astype(np.uint8), HWC=True)
-
-    # logger.warning(model_output)
-
-    for i in range(box_row):
-        coordinate = box_coord[i]
-        confidenceVal = confidence_arr[i]
-        labelIdx = label_arr[i]
-        # logger.info(labelIdx)
-        classIdList = config["class_names"]
-        label = classIdList[labelIdx]
-        # logger.info(label)
-
-        x0, y0, x1, y1 = (
-            round(coordinate[0]),
-            round(coordinate[1]),
-            round(coordinate[2]),
-            round(coordinate[3]),
-        )
-        topLeftPoint = Point(x=x0, y=y0)
-        bottomRightPoint = Point(x=x1, y=y1)
-
-        # logger.info(coordinate)
-        # logger.info(f"{x0}, {y0}, {x1}, {y1}")
-        tmpBoundingBox = BoundingBox(
-            top_left=topLeftPoint,
-            bottom_right=bottomRightPoint,
-            confidence=confidenceVal,
-            label=label,
-        )
-        boundingBoxList.append(tmpBoundingBox)
-
-    drawingFrame.draw_bounding_boxes(boxes=boundingBoxList)
-
-    return drawingFrame.data()
-
-
+        postProcessTime = time()
+        self.postProcessTime = postProcessTime - inferenceTime
 try:
     import onnxruntime as ORT
 except ImportError as e:
@@ -1246,6 +1216,8 @@ if __name__ == "__main__":
     isImgClassApplication = False
     isObjDetectApplication = False
     isYOLOXRunning = False
+    isHumanPoseApplication = False
+
     if application == "image_class":
         onnx_model = ImgClassOnnxModel(onnx_path=modelOnnxPathName,execution_provider=execProvider)
         isImgClassApplication = True
@@ -1260,6 +1232,10 @@ if __name__ == "__main__":
     elif application == "object_detect_yolox":
         onnx_model = yoloxObjectDetectOnnxModel(onnx_path=modelOnnxPathName,execution_provider=execProvider)
         isYOLOXRunning = True
+    elif application == "human_pose":
+        logger.warning(modelOnnxPathName)
+        onnx_model = HumanPoseOnnxModel(onnx_path=modelOnnxPathName,execution_provider=execProvider)
+        isHumanPoseApplication = True
 
     if isObjDetectApplication:
         drawingResultDir = f"{cwd}/drawingRes/{modelFn}"
@@ -1270,7 +1246,7 @@ if __name__ == "__main__":
             os.mkdir(drawingResultDir)
     
     # WARM UP MODEL FOR CACHE LOAD
-    for i in range(10):
+    for i in range(1):
         
         # using random input for object detection torchvision models (high version) will yield error
         # onnxruntime.capi.onnxruntime_pybind11_state.RuntimeException: [ONNXRuntimeError] : 6 : RUNTIME_EXCEPTION : Non-zero status code returned while running Reshape node. Name:'/roi_heads/Reshape' Status Message: /onnxruntime_src/onnxruntime/core/providers/cpu/tensor/reshape_helper.h:36 onnxruntime::ReshapeHelper::ReshapeHelper(const onnxruntime::TensorShape&, onnxruntime::TensorShapeVector&, bool) size != 0 && (input_shape.Size() % size) == 0 was false. The input tensor cannot be reshaped to the requested shape. Input shape:{0,364}, requested shape:{0,-1}
@@ -1288,16 +1264,19 @@ if __name__ == "__main__":
         cv2Img = cv2.imread(imgIdx)
         tempImg = Frame(imgIdx)
 
-        assert isImgClassApplication is True or isObjDetectApplication is True or isYOLOXRunning is True
+        assert isImgClassApplication is True \
+        or isObjDetectApplication is True \
+        or isYOLOXRunning is True \
+        or isHumanPoseApplication is True
+
         if isImgClassApplication:
             classOut, scoreOut = onnx_model(tempImg)
         elif isObjDetectApplication:
             drawingFrameOut = onnx_model(tempImg)
         elif isYOLOXRunning:
             drawingFrameOut = onnx_model(cv2Img)
-    
-    logger.info("Finish warm up model. Sleep for 5 minutes before benchmarking...")
-    t.sleep(timeSleep)
+        elif isHumanPoseApplication:
+            dumpOut = onnx_model(tempImg,cv2Img)    
 
     scoreClasstDict = {}
     timeBenchmarkList = []
@@ -1307,7 +1286,11 @@ if __name__ == "__main__":
         tempImg = Frame(imgIdx) 
         cv2Img = cv2.imread(imgIdx)
 
-        assert isImgClassApplication is True or isObjDetectApplication is True or isYOLOXRunning is True
+        assert isImgClassApplication is True \
+        or isObjDetectApplication is True \
+        or isYOLOXRunning is True \
+        or isHumanPoseApplication is True
+
         if isImgClassApplication:
             classOut, scoreOut = onnx_model(tempImg)
             scoreClasstDict[classOut] = scoreOut
@@ -1322,7 +1305,8 @@ if __name__ == "__main__":
         elif isYOLOXRunning:
             # For YOLOX models
             drawingFrameOut = onnx_model(cv2Img)
-
+        elif isHumanPoseApplication:
+            dumpOut = onnx_model(tempImg,cv2Img)
         else:
             logger.warning("At least one application must be specified")
 

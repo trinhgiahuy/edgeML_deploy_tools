@@ -109,3 +109,8 @@ if __name__ == "__main__":
         for name in YOLOXObjectDetectOnnxModelName:
             logger.warning(f"Get name {name}")
             downloadApplicationsModel(name=name, application=application, prefix=prefix)
+
+    if application == "human_pose":
+        for name in HumanPoseOnnxModelName:
+            logger.warning(f"Get name {name}")
+            downloadApplicationsModel(name=name, application=application, prefix=prefix)    
