@@ -22,7 +22,9 @@ YOLOX_MODEL_LIST =['yolox_nano','yolox_tiny','yolox_s']
 
 cachedEnable = 1
 timeSleep = 10*60
-deviceSet = "cpu"               # Default device for YOLOV5, other is gpu
+
+# deviceSet according to execProvider
+# deviceSet = "cpu"               # Default device for YOLOV5, other is gpu
 # ["CPUExecutionProvider", "CUDAExecutionProvider"]
 execProvider = "CPUExecutionProvider"
 
@@ -891,6 +893,16 @@ class customObjectDetectOnnxModel:
         modelName = onnx_path.split('/')[-1].split('.')[0]
         logger.info(f"ModelName: {modelName}")
         if modelName in YOLOV5_MODEL_LIST:
+
+            # Change device set accourding to execution provider
+            if execution_provider == "CPUExecutionProvider":
+                deviceSet = "cpu"
+            elif execution_provider == "CUDAExecutionProvider":
+                deviceSet = "gpu"
+            else:
+                logger.warning("UNKNOWN EXEC PROVIDER")
+                
+
             from cvu.detector.yolov5 import Yolov5 as Yolov5Onnx
             self.session = Yolov5Onnx(
                 classes="coco",
@@ -1226,13 +1238,16 @@ if __name__ == "__main__":
     elif application == "object_detect":
         onnx_model = ObjectDetectOnnxModel(onnx_path=modelOnnxPathName,execution_provider=execProvider)
         isObjDetectApplication = True
+
     elif application == "object_detect_custom":
         logger.warning(modelOnnxPathName)
         onnx_model = customObjectDetectOnnxModel(onnx_path=modelOnnxPathName,execution_provider=execProvider)
         isObjDetectApplication = True
+
     elif application == "object_detect_yolox":
         onnx_model = yoloxObjectDetectOnnxModel(onnx_path=modelOnnxPathName,execution_provider=execProvider)
         isYOLOXRunning = True
+
     elif application == "human_pose":
         logger.warning(modelOnnxPathName)
         onnx_model = HumanPoseOnnxModel(onnx_path=modelOnnxPathName,execution_provider=execProvider)
