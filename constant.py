@@ -3,44 +3,31 @@ COCODriveLink = "https://drive.google.com/u/2/uc?id=1gE5C1UXcCyogZU3K95tn-bXfuF8
 imageClassModelName = [
     "alexnet",
     "googlenet",
-   "efficientnet_b0",
-   "densenet121",
-   "squeezenet1_0",
-   "inception_v3",
-#    "maxvit_t",
-   "shufflenet_v2_x0_5",
-   "mobilenet_v2",
-   "mobilenet_v3_small",
-   "mobilenet_v3_large",
+    "efficientnet_b0",
+    "densenet121",
+    "squeezenet1_0",
+    "inception_v3",
+    "shufflenet_v2_x0_5",
+    "mobilenet_v2",
+    "mobilenet_v3_small",
+    "mobilenet_v3_large",
     "mnasnet0_5",
-   "mnasnet0_75",
-#    "mnasnet1_0",
-   "mnasnet1_3",
-   "resnet18",
-    # # "resnet50",
-    # # "resnet101",
-    # # "resnet152",
-    # "resnext50_32x4d",
-    # # "resnext101_32x8d",
-    # # "resnext101_64x4d",
-    # "wide_resnet50_2",
-    # # "googlenet",
+    "mnasnet0_75",
+    "mnasnet1_0",
+    "mnasnet1_3",
+    "resnet18",
 ]
 
 objectDetectModelName = [
-    "fasterrcnn_mobilenet_v3_large_320_fpn",
-    "fasterrcnn_mobilenet_v3_large_fpn",
-    "ssd300_vgg16",
+    # "fasterrcnn_mobilenet_v3_large_320_fpn",
+    # "fasterrcnn_mobilenet_v3_large_fpn",
+    # "ssd300_vgg16",
     "ssdlite320_mobilenet_v3_large",
-    # "fasterrcnn_resnet50_fpn_v2",
-    # "fasterrcnn_resnet50_fpn",
-    # "fcos_resnet50_fpn",
-    # "retinanet_resnet50_fpn_v2",
-    # "retinanet_resnet50_fpn",
 ]
 
 customobjectDetectModelName = [
-    # "tinyYOLOv2",  
+    "tinyYOLOv2", 
+    "tinyYOLOv3", 
     'yolov5n',
     'yolov5n6',
     'yolov5s',
@@ -89,7 +76,7 @@ modelLinkDrive = {
     "ssd300_vgg16": "https://drive.google.com/u/2/uc?id=1eoC_3tH_s0HbuMTJ-j2zEBr1uTTFe529",
     "ssdlite320_mobilenet_v3_large": "https://drive.google.com/u/2/uc?id=14qxtYiZ6euKSYRgePFK4XI9UQAaopvCO",
     "tinyYOLOv2": "https://drive.google.com/u/2/uc?id=1viejka4pVIKRsHCsd3ljvkParN9DxQ8r",
-    
+    "tinyYOLOv3": "https://drive.google.com/u/2/uc?id=1tS5xMy_eg5F4rKtx25ge4zu8-Ayrc6VM",
     "yolov5n": "https://drive.google.com/u/2/uc?id=1U8yozXeRBwaAoSwQPcBHguvqduBtNfJR",
     "yolov5s": "https://drive.google.com/u/2/uc?id=1CtLFTjVQeYso3tb074PZEmo-NouZQWWQ",
     "yolov5m": "https://drive.google.com/u/2/uc?id=1fir_93j-9kqeAxT6ZMN6qcGwmP-LUkmB",
@@ -131,8 +118,11 @@ JetsonTX2LinkDrive={
     "fasterrcnn_mobilenet_v3_large_fpn":"",
     "fasterrcnn_mobilenet_v3_large_320_fpn":"",
     "ssd300_vgg16":"",
-    "ssdlite320_mobilenet_v3_large":"",
+    "ssdlite320_mobilenet_v3_large":"https://drive.google.com/u/2/uc?id=1lOweARggMEJyyLvyPzarLerX6ot3B1_c",
 
+    "tinyYOLOv2": "https://drive.google.com/u/2/uc?id=1cdkVpZl8K56gIz12Y15_icPQ0hufd3_Y",
+    "tinyYOLOv3":"https://drive.google.com/u/2/uc?id=18YF4Fbx8hsmUMwPtla9UVe0E5Josi7RU",
+    
     "yolov5n":"https://drive.google.com/u/2/uc?id=1xzMtHQsJFK3SGQh-CRihbm2sjjs-7Z49",
     "yolov5n6":"https://drive.google.com/u/2/uc?id=1i2Ws6YPp85BgTCjSu36dC0PS7LaW9weQ",
     "yolov5s":"https://drive.google.com/u/2/uc?id=1o7eL8T2PtM5S5MOKrR0gW-dYunnk2Tcl",
@@ -141,6 +131,24 @@ JetsonTX2LinkDrive={
     "yolox_nano":"https://drive.google.com/u/2/uc?id=1DAw6lxF6aUkw06Cu5yHH9A5Uq5dlsrxh",
     "yolox_tiny":"https://drive.google.com/u/2/uc?id=1aAE6l2BfGpgYSgwekmtX7Vpei9YtY1fy",
     "yolox_s":"https://drive.google.com/u/2/uc?id=1feOP-Y2JGNZt6Rd72fsS6cNMPffOQheE"
+}
+
+jetsonTensorLink ={
+    "alexnet": "",
+    "googlenet": "",
+    "efficientnet_b0": "",
+    "densenet121" : "",
+    "squeezenet1_0" : "",
+    "inception_v3" : "",
+    "shufflenet_v2_x0_5" : "",
+    "mobilenet_v2" : "",
+    "mobilenet_v3_small" : "",
+    "mobilenet_v3_large" : "",
+    "mnasnet0_5" : "",
+    "mnasnet0_75" : "",
+    "mnasnet1_0" : "",
+    "mnasnet1_3" : "",
+    "resnet18" : "",
 }
 
 execProvider = [

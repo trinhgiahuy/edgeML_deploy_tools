@@ -386,4 +386,69 @@ objDetModelsCfg = {
     },
 }
 
-customOnnxModel = {"tinyYOLOv2": "/home/user/Downloads/tinyyolov2-7.onnx"}
+humanPoseModelsCfg = {
+    "lightweightHumanPose":{
+        "preprocessing": {
+            "custom": True, 
+            "resize_size": 256,
+            "mean":[128,128,128],
+            "scale":1/256,                   # In preprocess function, will take np.float32(1/256)
+            "stride":8,
+            
+            #"cpu": True ???
+        },
+        "postprocessing": {
+            "unsample_ratio":4,
+        }
+    }
+}
+
+semanSegmentModelsCfg = {
+    "lraspp_mobilenet_v3_large": {
+        "preprocessing": {
+            "resize_size": 520,  # It will compute height/width based on resize size
+            "mean": [0.485, 0.456, 0.406],
+            "std": [0.229, 0.224, 0.225],
+            "interpolation": "linear",
+        },
+        "postprocessing": {"class_names": IMAGENET_CLASSES},
+    },
+}
+
+customOnnxModel = {
+    #https://github.com/onnx/models/tree/main/vision/object_detection_segmentation/tiny-yolov2
+    "tinyYOLOv2" : "/home/user/Downloads/tinyYOLOv2.onnx",
+
+    #https://github.com/onnx/models/tree/main/vision/object_detection_segmentation/tiny-yolov3
+    "tinyYOLOv3" : "/home/user/Downloads/tinyYOLOv3.onnx",    
+
+    #https://github.com/TheYoungBeast/YoloV4-Tiny-ONNX
+    # "tinyYOLOv4" : "/home/user/Downloads/yolov4-tiny-single-batch.onnx"
+    "tinyYOLOv4" : "/home/user/github_utils/darknet2onnx/yolov4-tiny.onnx",
+
+    "YOLOv4":"/home/user/Downloads/yolov4.onnx",
+
+    "yolox_nano":"/home/user/Yolox/yolox_nano.onnx",
+
+    "yolox_tiny": "/home/user/Yolox/yolox_tiny.onnx",
+
+    "yolox_s": "/home/user/Yolox/yolox_s.onnx",
+
+    # "yolox_x": "/home/user/Yolox/yolox_x.onnx"
+
+    "lightweightHumanPose": "/home/user/pose_est/lightweight-human-pose-estimation.pytorch/lightweightHumanPose.onnx"
+}
+
+pytorchOnnxModel_38 = {
+    "yolov5n": "/home/user/YOLOv5/yolov5/optset13/yolov5n.onnx",
+    "yolov5n6": "/home/user/YOLOv5/yolov5/optset13/yolov5n6.onnx",
+    "yolov5s": "/home/user/YOLOv5/yolov5/optset13/yolov5s.onnx",
+    "yolov5s6": "/home/user/YOLOv5/yolov5/optset13/yolov5s6.onnx",
+}
+
+pytorchOnnxModel_39 = {
+    "yolov5n": "/home/user/Yolov5-ONNX/yolov5n.onnx",
+    "yolov5n6": "/home/user/Yolov5-ONNX/yolov5n6.onnx",
+    "yolov5s" : "/home/user/Yolov5-ONNX/yolov5s.onnx",
+    "yolov5s6" : "/home/user/Yolov5-ONNX/yolov5s6.onnx",
+}   
