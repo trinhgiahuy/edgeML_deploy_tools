@@ -44,6 +44,9 @@ HumanPoseOnnxModelName = [
     'lightweightHumanPose'
 ]
 
+SemanSegmenModelName = [
+    'lraspp_mobilenet_v3_large'
+]
 # For Pi3/4
 modelLinkDrive = {
     "alexnet": "https://drive.google.com/u/2/uc?id=1FPfEM7T1lXfezz_9jWY0jnp4KBq16wrz",

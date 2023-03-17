@@ -733,12 +733,29 @@ if __name__ == "__main__":
         )
         raise RuntimeError(msg)
 
-    if not os.path.exists(output_dir):
+    if cachedEnable:
+        csvOutDir = f"{cwd}/cache"
+    else:
+        csvOutDir = f"{cwd}/no_cache"
+    
+    if not os.path.exists(csvOutDir):
         msg = (
-            'Cannot find csv_output" directory.',
+            f'Cannot find {csvOutDir}" directory.',
             "Please check extractDrive.py again",
         )
         raise RuntimeError(msg)
+
+    if execProvider== "CPUExecutionProvider":
+        csvOutDir = os.path.join(csvOutDir,"cpu")
+    elif execProvider== "CUDAExecutionProvider":
+        csvOutDir = os.path.join(csvOutDir,"gpu")
+    else:
+        msg = (f'Unknown execution provider. Check it again')
+        raise RuntimeError(msg)
+    
+    if not os.path.exists(csvOutDir):
+        os.mkdir(csvOutDir)
+
 
     isImgClassApplication = False
     isObjDetectApplication = False

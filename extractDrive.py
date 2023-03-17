@@ -9,6 +9,8 @@ cwd = os.getcwd()
 COCODir = cwd + "/COCO_5000_imgs/"
 COCOExist = os.path.exists(COCODir)
 csv_output_dir = f"{cwd}/csv_output"
+csvOutDirCache = f"{cwd}/cache"
+csvOutDirNoCache = f"{cwd}/no_cache"
 drawing_detect_dir = f"{cwd}/drawingRes"
 
 
@@ -75,9 +77,17 @@ def downloadApplicationsModel(name: str, application: str, prefix: str, isJetson
 
 
 if __name__ == "__main__":
-    if not os.path.exists(csv_output_dir):
-        logger.warning(f"Directory {csv_output_dir} not found. Creating...")
-        os.mkdir(csv_output_dir)
+    # if not os.path.exists(csv_output_dir):
+    #     logger.warning(f"Directory {csv_output_dir} not found. Creating...")
+    #     os.mkdir(csv_output_dir)
+    if not os.path.exists(csvOutDirCache):
+        logger.warning(f"Directory {csvOutDirCache} not found. Creating")
+        os.mkdir(csvOutDirCache)
+
+    if not os.path.exists(csvOutDirNoCache):
+        logger.warning(f"Directory {csvOutDirNoCache} not found. Creating")
+        os.mkdir(csvOutDirNoCache)
+
     if not os.path.exists(drawing_detect_dir):
         logger.warning(f"Directory {drawing_detect_dir} not found. Creating...")
         os.mkdir(drawing_detect_dir)
@@ -121,4 +131,9 @@ if __name__ == "__main__":
     if application == "human_pose":
         for name in HumanPoseOnnxModelName:
             logger.warning(f"Get name {name}")
-            downloadApplicationsModel(name=name, application=application, prefix=prefix, isJetson=isJetson)    
+            downloadApplicationsModel(name=name, application=application, prefix=prefix, isJetson=isJetson)
+    
+    if application == "seman_segmen":
+        for name in SemanSegmenModelName:
+            logger.warning(f"Get name {name}")
+            downloadApplicationsModel(name=name, application=application, prefix=prefix, isJetson=isJetson)
