@@ -50,7 +50,8 @@ for modelName in $arrModelList
 do
     modelFn="${modelName}"
     echo "Executing classifier onnx model ${modelFn}"
-    python onnxClassifier.py --prefix $prefix --application $application --modelFn $modelFn --numIteration $numIteration
+    # python onnxClassifier.py --prefix $prefix --application $application --modelFn $modelFn --numIteration $numIteration
+    python onnxClassifier_fromcvinfer.py --prefix $prefix --application $application --modelFn $modelFn --numIteration $numIteration
 done
 
 

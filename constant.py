@@ -77,7 +77,7 @@ modelLinkDrive = {
     "ssdlite320_mobilenet_v3_large": "https://drive.google.com/u/2/uc?id=14qxtYiZ6euKSYRgePFK4XI9UQAaopvCO",
     
     "tinyYOLOv2": "https://drive.google.com/u/2/uc?id=1viejka4pVIKRsHCsd3ljvkParN9DxQ8r",
-    "tinyYOLOv3": "https://drive.google.com/u/2/uc?id=1iXlPUfFGyK809ulBjFZIUM-BVmja7EUC",
+    "tinyYOLOv3": "",
 
     "yolov5n": "https://drive.google.com/u/2/uc?id=1U8yozXeRBwaAoSwQPcBHguvqduBtNfJR",
     "yolov5s": "https://drive.google.com/u/2/uc?id=1CtLFTjVQeYso3tb074PZEmo-NouZQWWQ",
@@ -123,7 +123,7 @@ JetsonTX2LinkDrive={
     "ssdlite320_mobilenet_v3_large":"https://drive.google.com/u/2/uc?id=1lOweARggMEJyyLvyPzarLerX6ot3B1_c",
 
     "tinyYOLOv2": "https://drive.google.com/u/2/uc?id=1cdkVpZl8K56gIz12Y15_icPQ0hufd3_Y",
-    "tinyYOLOv3":"https://drive.google.com/u/2/uc?id=1RgpUjs6fa0AfrLWJmFMgs2S03GIowc3u",
+    "tinyYOLOv3":"https://drive.google.com/u/2/uc?id=1NsAujinS-It1plRg5OtOcHQBFfXrLWoW",
     
     "yolov5n":"https://drive.google.com/u/2/uc?id=1xzMtHQsJFK3SGQh-CRihbm2sjjs-7Z49",
     "yolov5n6":"https://drive.google.com/u/2/uc?id=1i2Ws6YPp85BgTCjSu36dC0PS7LaW9weQ",
