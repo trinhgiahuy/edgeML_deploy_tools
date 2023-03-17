@@ -850,11 +850,16 @@ if __name__ == "__main__":
         f"Pre: {preProTime}, Inf: {inferTime}, Post: {postProTime}, Engine: {engineLoadTime}"
     )
 
+    if cachedEnable:
+        csvOutDir = f"{cwd}/cache"
+    else:
+        csvOutDir = f"{cwd}/no_cache"
+    
     csvFileOut = modelFn + "_onnx" + ".csv"
-    output_dir = os.path.join(output_dir, csvFileOut)
+    csvOutDir = os.path.join(csvOutDir, csvFileOut)
     # timeBenchmarkDF = pd.DataFrame(timeBenchmarkArr)
     # timeBenchmarkDF.to_csv(output_dir, header=False, index=False)
-    np.savetxt(output_dir, timeBenchmarkArr, delimiter=",")
+    np.savetxt(csvOutDir, timeBenchmarkArr, delimiter=",")
     print(f"Finish exporting result to file {csvFileOut}.")
 
     if cachedEnable:
