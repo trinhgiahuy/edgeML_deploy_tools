@@ -133,7 +133,7 @@ JetsonTX2LinkDrive={
     "yolov5s":"https://drive.google.com/u/2/uc?id=1o7eL8T2PtM5S5MOKrR0gW-dYunnk2Tcl",
     "yolov5s6":"https://drive.google.com/u/2/uc?id=1VsAPjTgQbdgZVZLFaLjwvc_9bR7o69J6",
 
-    "yolox_nano":"https://drive.google.com/u/2/uc?id=1DAw6lxF6aUkw06Cu5yHH9A5Uq5dlsrxh",
+    "yolox_nano":"https://drive.google.com/u/2/uc?id=1FOrrdu1fvoSKm_PxOonC2olZVrFFjOW2",
     "yolox_tiny":"https://drive.google.com/u/2/uc?id=1aAE6l2BfGpgYSgwekmtX7Vpei9YtY1fy",
     "yolox_s":"https://drive.google.com/u/2/uc?id=1feOP-Y2JGNZt6Rd72fsS6cNMPffOQheE"
 }
