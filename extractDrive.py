@@ -32,14 +32,19 @@ def downloadCOCO():
         logger.info("COCO Image Dataset already exists")
 
 
-def downloadApplicationsModel(name: str, application: str, prefix: str):
-    applicationModelURL = modelLinkDrive[name]
+def downloadApplicationsModel(name: str, application: str, prefix: str, isJetson: bool):
 
+    if isJetson:
+        # For Jetson Tx2 using this line
+        applicationModelURL = JetsonTX2LinkDrive[name]
+    else:
+        # For pi
+        applicationModelURL = modelLinkDrive[name]
+
+    # Unused this since Jetson Nano upgraded to use Python 3.8
     # For jetson Nano using this line
     # applicationModelURL = JetsonNanoLinkDrive[name]
 
-    # For Jetson Tx2 using this line
-    # applicationModelURL = JetsonTX2LinkDrive[name]
 
     logger.info(f"Extracting model: {name} ... from {applicationModelURL}")
 
@@ -86,31 +91,34 @@ if __name__ == "__main__":
     parser.add_argument(
         "--prefix", type=str, required=True, help="(onnx, OpenVINO, tvn)"
     )
+    parser.add_argument(
+        "--isJetson", type=bool, required=True, help="isJetsonOrNot"
+    )
+
     args = parser.parse_args()
 
     application = args.application
-    # application = "object_detect"
-
     prefix = args.prefix
+    isJetson = args.isJetson
 
     if application == "image_class":
         for name in imageClassModelName:
-            downloadApplicationsModel(name=name, application=application, prefix=prefix)
+            downloadApplicationsModel(name=name, application=application, prefix=prefix, isJetson=isJetson)
 
     if application == "object_detect":
         for name in objectDetectModelName:
-            downloadApplicationsModel(name=name, application=application, prefix=prefix)
+            downloadApplicationsModel(name=name, application=application, prefix=prefix, isJetson=isJetson)
 
     if application == "object_detect_custom":
         for name in customobjectDetectModelName:
-            downloadApplicationsModel(name=name, application=application, prefix=prefix)
+            downloadApplicationsModel(name=name, application=application, prefix=prefix, isJetson=isJetson)
 
     if application == "object_detect_yolox":
         for name in YOLOXObjectDetectOnnxModelName:
             logger.warning(f"Get name {name}")
-            downloadApplicationsModel(name=name, application=application, prefix=prefix)
+            downloadApplicationsModel(name=name, application=application, prefix=prefix, isJetson=isJetson)
 
     if application == "human_pose":
         for name in HumanPoseOnnxModelName:
             logger.warning(f"Get name {name}")
-            downloadApplicationsModel(name=name, application=application, prefix=prefix)    
+            downloadApplicationsModel(name=name, application=application, prefix=prefix, isJetson=isJetson)    

@@ -5,7 +5,7 @@ numIteration=5000
 
 application=$1
 prefix=$2
-
+isJetson=$3
 #  Down load CIFAR dataset
 # echo "Downloading CIFAR dataset..."
 # python -c 'from extractDrive import *; print(downloadCIFAR())'
@@ -20,7 +20,7 @@ prefix=$2
 
 echo "Download all models for application ${application}"
 
-python extractDrive.py --application $application --prefix $prefix
+python extractDrive.py --application $application --prefix $prefix --isJetson $isJetson
 
 if [ "$application" = "image_class" ]; then
     arrModelList=`python -c 'from constant import *; print(" ".join(getImageClassModelList()))'`
