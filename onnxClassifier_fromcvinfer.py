@@ -894,11 +894,6 @@ if __name__ == "__main__":
     logger.info(
         f"Pre: {preProTime}, Inf: {inferTime}, Post: {postProTime}, Engine: {engineLoadTime}"
     )
-
-    if cachedEnable:
-        csvOutDir = f"{cwd}/cache"
-    else:
-        csvOutDir = f"{cwd}/no_cache"
     
     csvFileOut = modelFn + "_onnx" + ".csv"
     csvOutDir = os.path.join(csvOutDir, csvFileOut)
