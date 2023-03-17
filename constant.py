@@ -47,6 +47,7 @@ HumanPoseOnnxModelName = [
 SemanSegmenModelName = [
     'lraspp_mobilenet_v3_large'
 ]
+
 # For Pi3/4
 modelLinkDrive = {
     "alexnet": "https://drive.google.com/u/2/uc?id=1FPfEM7T1lXfezz_9jWY0jnp4KBq16wrz",
@@ -93,15 +94,17 @@ modelLinkDrive = {
     "yolox_tiny": "https://drive.google.com/u/2/uc?id=1SLX-36DVvwPxAG7HkKWdZRoMU2hWpYJ5",
     "yolox_s" : "https://drive.google.com/u/2/uc?id=1UjYOqulLo8uMih7ViZhaMTfKBcT5w60K",
 
-    "lightweightHumanPose": "https://drive.google.com/u/2/uc?id=1G-RCf8A-tmM0yOMHG54cLP15g2Yvf6Dn"
+    "lightweightHumanPose": "https://drive.google.com/u/2/uc?id=1G-RCf8A-tmM0yOMHG54cLP15g2Yvf6Dn",
+
+    "lraspp_mobilenet_v3_large": "https://drive.google.com/u/2/uc?id=1WkA1U-VECVqgoIZrfbSIWE89CD0i7ELE"
 }
 
-JetsonNanoLinkDrive = {
-    # "fasterrcnn_resnet50_fpn":"https://drive.google.com/u/2/uc?id=13_HghVj1xNuu577A3K9c3oekeC_zIZ_a",
-    "fasterrcnn_mobilenet_v3_large_fpn": "https://drive.google.com/u/2/uc?id=1_rQk4N9OezQBbuaPFnqm1NCEVdWFuqwg",
-    "ssd300_vgg16": "https://drive.google.com/u/2/uc?id=1J-CSHqZy8-WM6r2JKk3-bO3Lc4N6kXoG",
-    "ssdlite320_mobilenet_v3_large": "https://drive.google.com/u/2/uc?id=1BCneFf2fOYJumSjq4IS5iV4vN6w7kaV7",
-}
+# JetsonNanoLinkDrive = {
+#     # "fasterrcnn_resnet50_fpn":"https://drive.google.com/u/2/uc?id=13_HghVj1xNuu577A3K9c3oekeC_zIZ_a",
+#     "fasterrcnn_mobilenet_v3_large_fpn": "https://drive.google.com/u/2/uc?id=1_rQk4N9OezQBbuaPFnqm1NCEVdWFuqwg",
+#     "ssd300_vgg16": "https://drive.google.com/u/2/uc?id=1J-CSHqZy8-WM6r2JKk3-bO3Lc4N6kXoG",
+#     "ssdlite320_mobilenet_v3_large": "https://drive.google.com/u/2/uc?id=1BCneFf2fOYJumSjq4IS5iV4vN6w7kaV7",
+# }
 
 JetsonTX2LinkDrive={
     "alexnet":"https://drive.google.com/u/2/uc?id=1EQ4EUmzO_z-btbYL8WoanHTjsdfoW-7N",
@@ -135,7 +138,11 @@ JetsonTX2LinkDrive={
 
     "yolox_nano":"https://drive.google.com/u/2/uc?id=1FOrrdu1fvoSKm_PxOonC2olZVrFFjOW2",
     "yolox_tiny":"https://drive.google.com/u/2/uc?id=1aAE6l2BfGpgYSgwekmtX7Vpei9YtY1fy",
-    "yolox_s":"https://drive.google.com/u/2/uc?id=1feOP-Y2JGNZt6Rd72fsS6cNMPffOQheE"
+    "yolox_s":"https://drive.google.com/u/2/uc?id=1feOP-Y2JGNZt6Rd72fsS6cNMPffOQheE",
+
+    "lightweightHumanPose": "https://drive.google.com/u/2/uc?id=16pv__Up2E2vGP13vxBN2NVUzIiZQOCOu",
+
+    "lraspp_mobilenet_v3_large":"https://drive.google.com/u/2/uc?id=1U6rZ7X53KgFIyfVH1caECjfFyGW5qtbr"
 }
 
 jetsonTensorLink ={
@@ -173,3 +180,6 @@ def getYOLOXObjectDetectModelList():
 
 def getHumanPoseModelList():
     return HumanPoseOnnxModelName
+
+def getSemanSegmenModelList():
+    return SemanSegmenModelName

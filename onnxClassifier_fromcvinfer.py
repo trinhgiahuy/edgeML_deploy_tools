@@ -261,82 +261,6 @@ class ObjectDetectOnnxModel:
 
         return drawingFrameData
 
-# def yolov3_ObjectDetectPostProcess(onnx_output, drawingFrame: Frame, config: dict):
-#     """
-#     args:
-#         @box_output: shape (N_candidates,4): corrdinate of all anchor boxes
-#         @score_output: shappe(80,N_candidates): score of all anchor boxes
-#         @imgFrameData: must be resized Frame and shape (H,W,C)
-#         @config: postprocessing configuration dictionary
-#     """
-
-#     boxes, scores, indices = (
-#         onnx_output[0],
-#         onnx_output[1],
-#         onnx_output[2][0]
-#     )
-#     # logger.warning(indices.shape)
-#     # print('Boxes:', boxes.shape)
-#     # print('Scores:', scores.shape)
-#     # print('Indices:', indices.shape)
-#     classes = config['class_names']
-   
-
-#     objects_identified = indices.shape[0]
-#     out_boxes, out_scores, out_classes = [], [], []
-
-#     if objects_identified > 0:
-#         # logger.info(indices)
-#         for idx_ in indices:
-#             # logger.warning(idx_)
-#             out_classes.append(classes[idx_[1]])
-#             out_scores.append(scores[tuple(idx_)])
-#             idx_1 = (idx_[0], idx_[2])
-#             out_boxes.append(boxes[idx_1])
-#         # print(objects_identified, "objects identified in source image.")
-#     else:
-#         print("No objects identified in source image.")
-
-#     confidence_threshold = config['score_thresh']
-#     # drawingFrame = imgFrameData
-#     # logger.info(f"drawingFrame: {drawingFrame}")
-#     boundingBoxList=[]
-
-#     for i in range(objects_identified):
-#     # Start drawing Frame
-#         confidence = out_scores[i]
-#         if  confidence > confidence_threshold:
-            
-#             y0 = round(out_boxes[i][0])
-#             x0 = round(out_boxes[i][1])
-#             y1 = round(out_boxes[i][2])
-#             x1 = round(out_boxes[i][3])
-            
-#             # logger.info(f"{x0} {y0} {x1} {y1}")
-            
-#             x0 = 0 if x0 < 0 else x0
-#             y0 = 0 if y0 < 0 else y0
-#             x1 = drawingFrame.width() if x1 > drawingFrame.width() else x1
-#             y1 = drawingFrame.height() if y1 > drawingFrame.height() else y1
-            
-
-#             # logger.info(f"{x0} {y0} {x1} {y1}")clea
-
-#             label = out_classes[i]
-#             topLeftPoint = Point(x=x0, y=y0)
-#             bottomRightPoint = Point(x=x1, y=y1)
-#             tmpBoundingBox = BoundingBox(
-#                 top_left=topLeftPoint,
-#                 bottom_right=bottomRightPoint,
-#                 confidence=confidence,
-#                 label=label,
-#             )
-#             boundingBoxList.append(tmpBoundingBox)
-    
-#     drawingFrame.draw_bounding_boxes(boxes=boundingBoxList)
-
-#     return drawingFrame.data()
-
 class customObjectDetectOnnxModel:
     def __init__(self, onnx_path, execution_provider="CPUExecutionProvider"):
         # Load time recorder
@@ -684,6 +608,101 @@ class HumanPoseOnnxModel:
         )
         postProcessTime = time()
         self.postProcessTime = postProcessTime - inferenceTime
+
+class SemanSegmenOnnxModel:
+    
+    def __init__(self, onnx_path, execution_provider="CPUExecutionProvider"):
+        # Load time recorder
+        self.preProcessTime = 0.0
+        self.inferenceTime = 0.0
+        self.postProcessTime = 0.0
+        self.engineTime = 0.0
+
+        # load preprocessing function
+        preprocess_file = onnx_path.replace(".onnx", ".preprocess")
+        assert os.path.exists(preprocess_file)
+        with open(preprocess_file, "rb") as fid:
+            self.preprocess_function = dill.load(fid)
+
+        # similarly, load postprocessing function
+        postprocess_file = onnx_path.replace(".onnx", ".postprocess")
+        assert os.path.exists(postprocess_file)
+        with open(postprocess_file, "rb") as fid:
+            self.postprocess_function = dill.load(fid)
+
+        # load onnx model from onnx_path
+        avail_providers = ORT.get_available_providers()
+        logger.info("all available ExecutionProviders are:")
+        for idx, provider in enumerate(avail_providers):
+            logger.info(f"\t {provider}")
+
+        logger.info(f"trying to run with execution provider: {execution_provider}")
+        startLoadEngine = time()
+        self.session = ORT.InferenceSession(onnx_path, providers=[execution_provider,],)
+        self.engineTime = time() - startLoadEngine
+
+        self.input_name = self.session.get_inputs()[0].name
+
+        # load config from json file
+        # config_path is a json file
+        config_file = onnx_path.replace(".onnx", ".configuration.json")
+        assert os.path.exists(config_file)
+        with open(config_file, "r") as fid:
+            # self.config is a dictionary
+            self.config = json.loads(fid.read())
+
+    @logger.catch
+    def getEngineTime(self):
+        return self.engineTime
+
+    @logger.catch
+    def getpreProcessTime(self):
+        return self.preProcessTime
+
+    @logger.catch
+    def getinferenceTime(self):
+        return self.getinferenceTime
+
+    @logger.catch
+    def getpostProcessTime(self):
+        return self.postProcessTime
+
+    @logger.catch
+    def preprocess(self, frame: Frame):
+        # input must be a frame
+        assert isinstance(frame, Frame)
+        return self.preprocess_function(frame, self.config["preprocessing"])
+
+    @logger.catch
+    def postprocess(self, model_output):
+        return self.postprocess_function(model_output, self.config["postprocessing"])
+
+    @logger.catch
+    def __call__(self, frame: Frame):
+        # input must be a frame
+        assert isinstance(frame, Frame)
+
+        # calling preprocess
+        start = time()
+        model_input, meta_data = self.preprocess_function(
+            frame, self.config["preprocessing"]
+        )
+        preProcessTime = time()
+        self.preProcessTime = preProcessTime - start
+
+        # compute ONNX Runtime output prediction
+        ort_inputs = {self.input_name: model_input}
+        model_output = self.session.run(None, ort_inputs)
+        inferenceTime = time()
+        self.inferenceTime = inferenceTime - preProcessTime
+
+        # calling postprocess
+        dumpOut = self.postprocess_function(
+            model_output, self.config["postprocessing"]
+        )
+        postProcessTime = time()
+        self.postProcessTime = postProcessTime - inferenceTime
+
 try:
     import onnxruntime as ORT
 except ImportError as e:
@@ -761,6 +780,7 @@ if __name__ == "__main__":
     isObjDetectApplication = False
     isYOLOXRunning = False
     isHumanPoseApplication = False
+    isSemanSegmen = False
 
     if application == "image_class":
         onnx_model = ImgClassOnnxModel(onnx_path=modelOnnxPathName,execution_provider=execProvider)
@@ -784,6 +804,10 @@ if __name__ == "__main__":
         onnx_model = HumanPoseOnnxModel(onnx_path=modelOnnxPathName,execution_provider=execProvider)
         isHumanPoseApplication = True
 
+    elif application == "seman_segmen":
+        onnx_model = SemanSegmenOnnxModel(onnx_path=modelOnnxPathName,execution_provider=execProvider)
+        isSemanSegmenApplication = True
+
     if isObjDetectApplication:
         drawingResultDir = f"{cwd}/drawingRes/{modelFn}"
         if not os.path.exists(drawingResultDir):
@@ -803,7 +827,8 @@ if __name__ == "__main__":
             assert isImgClassApplication is True \
             or isObjDetectApplication is True \
             or isYOLOXRunning is True \
-            or isHumanPoseApplication is True
+            or isHumanPoseApplication is True \
+            or isSemanSegmenApplication is True
 
             if isImgClassApplication:
                 classOut, scoreOut = onnx_model(tempImg)
@@ -813,6 +838,8 @@ if __name__ == "__main__":
                 drawingFrameOut = onnx_model(cv2Img)
             elif isHumanPoseApplication:
                 dumpOut = onnx_model(tempImg,cv2Img)    
+            elif isSemanSegmenApplication:
+                dumpOut = onnx_model(tempImg)
 
     scoreClasstDict = {}
     timeBenchmarkList = []
@@ -825,7 +852,8 @@ if __name__ == "__main__":
         assert isImgClassApplication is True \
         or isObjDetectApplication is True \
         or isYOLOXRunning is True \
-        or isHumanPoseApplication is True
+        or isHumanPoseApplication is True \
+        or isSemanSegmenApplication is True 
 
         if isImgClassApplication:
             classOut, scoreOut = onnx_model(tempImg)

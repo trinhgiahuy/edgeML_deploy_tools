@@ -426,6 +426,13 @@ semanSegmentModelsCfg = {
             "mean": [0.485, 0.456, 0.406],
             "std": [0.229, 0.224, 0.225],
             "interpolation": "linear",
+            ## TEST
+            # "scale":1/520,                   
+            # "stride":8
+            # HERE: CROP SIZE IS FORCE SOLUTION 
+            # FUTURE TODO: LOOK ON DYNAMIC BATCH SHAPE OF ONNX MODEL
+            "crop_size": 520,
+
         },
         "postprocessing": {"class_names": IMAGENET_CLASSES},
     },

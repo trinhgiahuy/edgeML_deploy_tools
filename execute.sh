@@ -42,7 +42,9 @@ if [ "$application" = "human_pose" ]; then
     arrModelList=`python -c 'from constant import *; print(" ".join(getHumanPoseModelList()))'`
 fi
 
-
+if [ "$application" = "seman_segmen" ]; then
+     arrModelList=`python -c 'from constant import *; print(" ".join(getSemanSegmenModelList()))'`
+fi
 
 echo $arrModelList
 
