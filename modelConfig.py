@@ -384,6 +384,22 @@ objDetModelsCfg = {
             "class_names": TINY_YOLO_LABEL_CLASSES,
         },
     },
+    
+    "tinyYOLOv3": {
+        "preprocessing": {
+            "custom": True, 
+            "new_height": 416, 
+            "new_width": 416,
+            "keep_ratio": True,
+            "pad_constant": 128,
+            "rescaled_01": True,
+            "interpolation": "cubic"
+        },
+        "postprocessing": {
+            "score_thresh": 0.5,
+            "class_names": COCO_CATEGORY_NAMES,
+        },
+    },
 }
 
 humanPoseModelsCfg = {
