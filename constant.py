@@ -77,7 +77,7 @@ modelLinkDrive = {
     "ssdlite320_mobilenet_v3_large": "https://drive.google.com/u/2/uc?id=14qxtYiZ6euKSYRgePFK4XI9UQAaopvCO",
     
     "tinyYOLOv2": "https://drive.google.com/u/2/uc?id=1viejka4pVIKRsHCsd3ljvkParN9DxQ8r",
-    "tinyYOLOv3": "",
+    "tinyYOLOv3": "https://drive.google.com/u/2/uc?id=1-_c1V8s_vOjLO2D5ypg1W6kgiFPbvmwm",
 
     "yolov5n": "https://drive.google.com/u/2/uc?id=1U8yozXeRBwaAoSwQPcBHguvqduBtNfJR",
     "yolov5s": "https://drive.google.com/u/2/uc?id=1CtLFTjVQeYso3tb074PZEmo-NouZQWWQ",
