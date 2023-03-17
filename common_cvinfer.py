@@ -522,13 +522,35 @@ class Frame:
 
         # print(f"{crop_top}, {crop_bottom},{crop_left},{crop_right}")
         return Frame(self.data()[crop_top:crop_bottom, crop_left:crop_right, ...])
-
+    
+    # Original rescale range 0-1
     def get_rescaled_range_0_1_output(self):
         # logger.warning(f"Rescale Frame into [0,1]")
 
         # logger.info(f"Initial channel order:{self.shape()}")
         # logger.info(f"Change channel order to (C,H,W)")
+        
         self.to_CHW()
+
+        # logger.info(f"Channel after {self.shape()}")
+
+        oldDat = self.data()  # oldDat channel is (C,H,W)
+        # logger.info(f"oldDat {np.shape(oldDat)}")
+        info = np.iinfo(oldDat.dtype)
+        dataNorm = oldDat.astype(np.float64) / info.max
+
+        return dataNorm
+    
+    def get_rescaled_range_0_1_output_object_detect(self):
+        # logger.warning(f"Rescale Frame into [0,1]")
+
+        # logger.info(f"Initial channel order:{self.shape()}")
+        # logger.info(f"Change channel order to (C,H,W)")
+        
+        # 17/3/22: Fix according to tinyYOLOv3
+        # TODO: Uncomment this if err in other model using this function
+        # self.to_CHW()
+
         # logger.info(f"Channel after {self.shape()}")
 
         oldDat = self.data()  # oldDat channel is (C,H,W)
