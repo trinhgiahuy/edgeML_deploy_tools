@@ -16,6 +16,8 @@ from drawline import draw_rect
 import math
 from operator import itemgetter
 from skimage.io import imsave
+import onnx
+
 # from common_cvinfer import *
 YOLOV5_MODEL_LIST=['yolov5n','yolov5n6','yolov5s','yolov5s6','yolov5m','yolov5m6']
 YOLOX_MODEL_LIST =['yolox_nano','yolox_tiny','yolox_s']
@@ -891,6 +893,7 @@ class customObjectDetectOnnxModel:
         logger.info(f"trying to run with execution provider: {execution_provider}")
         
         modelName = onnx_path.split('/')[-1].split('.')[0]
+        self.modelName = modelName
         logger.info(f"ModelName: {modelName}")
         if modelName in YOLOV5_MODEL_LIST:
 
@@ -918,6 +921,20 @@ class customObjectDetectOnnxModel:
             self.engineTime = time() - startLoadEngine
             self.input_name = self.session.get_inputs()[0].name
             self.isYOLOv5 = False
+
+
+            # UNCOMMENT THIS BLOCK FOR DEBUGGING
+            # print(onnx_path)
+            # self.onnx_model = onnx.load(onnx_path)
+            # onnx.checker.check_model(self.onnx_model)
+            # print(self.onnx_model.graph.input)
+            # for _input in self.onnx_model.graph.input:
+            #     dim = _input.type.tensor_type.shape.dim
+            #     print(dim)
+            #     onnxInputShape = [MessageToDict(d).get("dimValue") for d in dim]
+            #     print(onnxInputShape)
+            # onnxInputShape = onnxInputShape[-2:]
+            # logger.warning(onnxInputShape)
 
         # load config from json file
         # config_path is a json file
@@ -967,11 +984,21 @@ class customObjectDetectOnnxModel:
             self.postProcessTime = postProcessTime - inferenceTime
 
         else:
-            ort_inputs = {self.input_name: model_input}
-            # model_output here shape example (1,1,25,13,13)
-            model_output = self.session.run(None, ort_inputs)
-            inferenceTime = time()
-            self.inferenceTime = inferenceTime - preProcessTime
+            if self.modelName in ['tinyYOLOv3']:
+                batchTmpSize = np.array([self.frameToDraw.shape()[1],self.frameToDraw.shape()[0]],dtype=np.float32).reshape(1,2)
+                input2_name = self.session.get_inputs()[1].name
+                model_output = self.session.run(None,{
+                    self.input_name : model_input, 
+                    input2_name: batchTmpSize
+                })
+                inferenceTime = time()
+                self.inferenceTime = inferenceTime - preProcessTime
+            else:
+                ort_inputs = {self.input_name: model_input}
+                # model_output here shape example (1,1,25,13,13)
+                model_output = self.session.run(None, ort_inputs)
+                inferenceTime = time()
+                self.inferenceTime = inferenceTime - preProcessTime
 
             # calling postprocess
             drawingFrameData = self.postprocess_function(
