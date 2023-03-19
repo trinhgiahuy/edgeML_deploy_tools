@@ -145,6 +145,13 @@ JetsonTX2LinkDrive={
     "lraspp_mobilenet_v3_large":"https://drive.google.com/u/2/uc?id=1U6rZ7X53KgFIyfVH1caECjfFyGW5qtbr"
 }
 
+# This is link for Python 3.6 ONNX models
+jetson36ModelLink={
+    "mnasnet0_5" : "https://drive.google.com/u/2/uc?id=129c_4uWmD138cYINDGa3p36Fc8m7cdLk"
+}
+
+
+# This is link for engine
 jetsonTensorLink ={
     "alexnet": "",
     "googlenet": "",
@@ -156,7 +163,7 @@ jetsonTensorLink ={
     "mobilenet_v2" : "",
     "mobilenet_v3_small" : "",
     "mobilenet_v3_large" : "",
-    "mnasnet0_5" : "",
+    "mnasnet0_5" : "https://drive.google.com/u/2/uc?id=1f3OZIdEXRTFxUQw3BDo8Vrh9mUx5MIyM",
     "mnasnet0_75" : "",
     "mnasnet1_0" : "",
     "mnasnet1_3" : "",

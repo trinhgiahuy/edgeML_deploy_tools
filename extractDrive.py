@@ -37,12 +37,16 @@ def downloadCOCO():
 def downloadApplicationsModel(name: str, application: str, prefix: str, isJetson: bool):
 
     if isJetson:
-        # For Jetson Tx2 using this line
-        applicationModelURL = JetsonTX2LinkDrive[name]
+        if prefix == "trt":
+            applicationModelURL = jetson36ModelLink[name]
+        elif prefix == "onnx":
+            # For Jetson Tx2 using this line
+            applicationModelURL = JetsonTX2LinkDrive[name]
+        else:
+            logger.warning(f"Unknown prefix {prefix}")
     else:
         # For pi
         applicationModelURL = modelLinkDrive[name]
-
     # Unused this since Jetson Nano upgraded to use Python 3.8
     # For jetson Nano using this line
     # applicationModelURL = JetsonNanoLinkDrive[name]
@@ -60,20 +64,22 @@ def downloadApplicationsModel(name: str, application: str, prefix: str, isJetson
         logger.warning(f"Directory {appPath} already exists!!")
 
     appFile = os.path.join(appPath, appTar)
-    onnxAppFile = appFile.replace(".onnx.tar.gz", ".onnx")
 
-    if not os.path.isfile(appFile):
-        logger.warning(f"Application model {name} not found. Downloading...")
-        gdown.download(applicationModelURL, appFile, quiet=False)
-    else:
-        logger.warning(f"Application model {name} found.")
+    if prefix == "onnx":
+        onnxAppFile = appFile.replace(".onnx.tar.gz", ".onnx")
 
-    if not os.path.isfile(onnxAppFile):
-        logger.warning(f"File is not extracted.Extracting application model {name}...")
-        appFileTmp = tarfile.open(appFile)
-        appFileTmp.extractall(appPath)
-        appFileTmp.close()
-        logger.info(f"Finish extracting application model{name}")
+        if not os.path.isfile(appFile):
+            logger.warning(f"Application model {name} not found. Downloading...")
+            gdown.download(applicationModelURL, appFile, quiet=False)
+        else:
+            logger.warning(f"Application model {name} found.")
+
+        if not os.path.isfile(onnxAppFile):
+            logger.warning(f"File is not extracted.Extracting application model {name}...")
+            appFileTmp = tarfile.open(appFile)
+            appFileTmp.extractall(appPath)
+            appFileTmp.close()
+            logger.info(f"Finish extracting application model{name}")
 
 
 if __name__ == "__main__":
