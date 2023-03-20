@@ -45,7 +45,7 @@ def downloadApplicationsModel(name: str, application: str, prefix: str, isJetson
         else:
             logger.warning(f"Unknown prefix {prefix}")
     else:
-        # For pi
+        # For pi, NEVER REACH HERE
         applicationModelURL = modelLinkDrive[name]
     # Unused this since Jetson Nano upgraded to use Python 3.8
     # For jetson Nano using this line
@@ -80,7 +80,23 @@ def downloadApplicationsModel(name: str, application: str, prefix: str, isJetson
             appFileTmp.extractall(appPath)
             appFileTmp.close()
             logger.info(f"Finish extracting application model{name}")
+    elif prefix == "trt":
+        trtAppFile = appFile.replace(".trt.tar.gz", ".trt")
+        if not os.path.isfile(appFile):
+            logger.warning(f"Application model {name} not found. Downloading...")
+            gdown.download(applicationModelURL, appFile, quiet=False)
+        else:
+            logger.warning(f"Application model {name} found.")
 
+        # print(appFile)
+        # print(trtAppFile)
+        # print(appPath)
+        if not os.path.isfile(trtAppFile):
+            logger.warning(f"File is not extracted.Extracting application model {name}...")
+            appFileTmp = tarfile.open(appFile)
+            appFileTmp.extractall(appPath)
+            appFileTmp.close()
+            logger.info(f"Finish extracting application model{name}")
 
 if __name__ == "__main__":
     # if not os.path.exists(csv_output_dir):

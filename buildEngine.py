@@ -3,6 +3,7 @@ from loguru import logger
 import tensorrt as trt
 import pycuda.autoinit
 import pycuda.driver as cuda
+import argparse
 
 TRT_LOGGER = trt.Logger()
 EXPLICIT_BATCH = 1 << (int)(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)
@@ -24,6 +25,8 @@ def buildTensorRTEngine(modelOnnxPathName):
 
     if os.path.exists(engineFilePath):
         logger.info(f"Engine file for model {model_name} exists!")
+
+        return 1
     else:
         
         # Trt engine file does not exist. Build it

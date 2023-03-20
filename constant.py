@@ -147,27 +147,41 @@ JetsonTX2LinkDrive={
 
 # This is link for Python 3.6 ONNX models
 jetson36ModelLink={
-    "mnasnet0_5" : "https://drive.google.com/u/2/uc?id=129c_4uWmD138cYINDGa3p36Fc8m7cdLk"
+    "alexnet": "https://drive.google.com/u/2/uc?id=14Hp-yJ8Sin2cgsYc6MlgKI_mDjS3A9q1",
+    "googlenet": "https://drive.google.com/u/2/uc?id=15aD4wjC0zXnRac0oCl3jNeYh2Tw0b_IV",
+    "efficientnet_b0": "https://drive.google.com/u/2/uc?id=1rU4zk_VcbY7u_tnSSJFw6-AbX_hQkhO5",
+    "densenet121" : "https://drive.google.com/u/2/uc?id=1nVcW5lLiXUmd8i4lzo1K5PSO9-pqa6TM",
+    "squeezenet1_0" : "https://drive.google.com/u/2/uc?id=1YMPerFmcc34ENF4r5HX2JxzXmn7DfJ6I",
+    "inception_v3" : "https://drive.google.com/u/2/uc?id=1rRPmn3dUfSyqNxb2kVogfIkfIlpD18eZ",
+    "shufflenet_v2_x0_5" : "https://drive.google.com/u/2/uc?id=1j2hs2FBpny35K_HAANzBItkKyoiqupIP",
+    "mobilenet_v2" : "https://drive.google.com/u/2/uc?id=12c7NBdrzZXee6VN0fQgffl0wqUjZkrNq",
+    "mobilenet_v3_small" : "https://drive.google.com/u/2/uc?id=1oTgPi3laUaK3mtLkOtR9Ju4DAjXDVSrN",
+    "mobilenet_v3_large" : "https://drive.google.com/u/2/uc?id=1t1pfjfjUiSN4U9tULCIRF29_Rf1JyJA9",
+    "mnasnet0_5" : "https://drive.google.com/u/2/uc?id=1E0xslf2FPCPjuwmLMY7yaAzvR4u4D07G",
+    "mnasnet0_75" : "https://drive.google.com/u/2/uc?id=1Jbc6UzbmNLfHF2fh4U9Q8s6s9Qj4b1O6",
+    "mnasnet1_0" : "https://drive.google.com/u/2/uc?id=1J5l3CgJnIbYTVwOi49Fej_EVrvkNFukT",
+    "mnasnet1_3" : "https://drive.google.com/u/2/uc?id=1doxlugWfNd0z5zIfqeYaK72L8cVI-zd7",
+    "resnet18" : "https://drive.google.com/u/2/uc?id=1LAYTZc0aojYSlifYW6hHtwlL_J5R82Tb",
 }
 
 
 # This is link for engine
 jetsonTensorLink ={
-    "alexnet": "",
-    "googlenet": "",
-    "efficientnet_b0": "",
-    "densenet121" : "",
-    "squeezenet1_0" : "",
-    "inception_v3" : "",
-    "shufflenet_v2_x0_5" : "",
-    "mobilenet_v2" : "",
-    "mobilenet_v3_small" : "",
-    "mobilenet_v3_large" : "",
-    "mnasnet0_5" : "https://drive.google.com/u/2/uc?id=1f3OZIdEXRTFxUQw3BDo8Vrh9mUx5MIyM",
-    "mnasnet0_75" : "",
-    "mnasnet1_0" : "",
-    "mnasnet1_3" : "",
-    "resnet18" : "",
+    "alexnet": "https://drive.google.com/u/2/uc?id=1OFzRXu-kQesCF1rYOqSwI9SMcAZ3mhdm",
+    "googlenet": "https://drive.google.com/u/2/uc?id=1GoANBNnWDtEnJiALxKJ01rUGn2uLbBCJ",
+    "efficientnet_b0": "https://drive.google.com/u/2/uc?id=1pbSoPljm46ZWQbsbUdnGV67lPRcGUHTA",
+    "densenet121" : "https://drive.google.com/u/2/uc?id=1kIyWt-BZepuF6cfU1_9oQO6zuAhyPzpo",
+    "squeezenet1_0" : "https://drive.google.com/u/2/uc?id=1qOSE3Jrnh5LUwkZQzUWPkhsW4EO2cQdh",
+    "inception_v3" : "https://drive.google.com/u/2/uc?id=1sBTc-9jeU-WDQ_dRw2VHePZiyuaYffCm",
+    "shufflenet_v2_x0_5" : "https://drive.google.com/u/2/uc?id=1PZMsd5UctEX9AvbOvCiOyx02RXfI7SRM",
+    "mobilenet_v2" : "https://drive.google.com/u/2/uc?id=1VQ0XD4TAdRVXmeGHZmdge51YWvOpPmES",
+    "mobilenet_v3_small" : "https://drive.google.com/u/2/uc?id=1mCMUNj7zJS-M0HJN5ntvV7iNUvvj3_nf",
+    "mobilenet_v3_large" : "https://drive.google.com/u/2/uc?id=1XqQECXYXc1wX70eJfz0COFOoa0_DjDs1",
+    "mnasnet0_5" : "https://drive.google.com/u/2/uc?id=13yVgP0151B4-FX6YpNtWJBmWSNNGiwxX",
+    "mnasnet0_75" : "https://drive.google.com/u/2/uc?id=1YfvjJbfpjz5_o2535dvakh8aVJvNSzgb",
+    "mnasnet1_0" : "https://drive.google.com/u/2/uc?id=1cqRxolLpb_bT5BXkrGVkK-yTfJ4nn6Uy",
+    "mnasnet1_3" : "https://drive.google.com/u/2/uc?id=1aHAEj3XMEfGtvjidde-WTvlRA60u3XCJ",
+    "resnet18" : "https://drive.google.com/u/2/uc?id=1FDvR6GrKxlJ7wxd3WIJVqRxge166u5M4",
 }
 
 execProvider = [

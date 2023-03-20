@@ -786,14 +786,15 @@ class ImgClassTensorRTModel:
         # logger.info(np.shape(self.output))
         # logger.info(self.output)
 
-        # categoryName, score = self.postprocess_function(
-        #     self.output, self.config["postprocessing"]
-        # )
-        categoryName, score = testImgClassObjPostProcess(
+        categoryName, score = self.postprocess_function(
             self.output, self.config["postprocessing"]
         )
+        # categoryName, score = testImgClassObjPostProcess(
+        #     self.output, self.config["postprocessing"]
+        # )
         # print(f"{categoryName} {score}")
         postProcessTime = time()
+        self.postProcessTime = postProcessTime - inferenceTime
 
         # Just return dump core
         return score
@@ -930,7 +931,7 @@ if __name__ == "__main__":
     COCO_verify_dir = f"{cwd}/COCO_5000_imgs"
     modelDir = f"{cwd}/{predir}_{prefix}"
     # output_dir = f"{cwd}/csv_output"
-    tensor_output_dir = f"{cwd}/tensorRT/"
+    tensor_output_dir = f"{cwd}/tensorRT_output/"
 
     modelOnnxPathName = os.path.join(modelDir, modelFn + ".onnx")
     modelTesorRTPathName = modelOnnxPathName
@@ -990,3 +991,17 @@ if __name__ == "__main__":
     logger.info(
         f"Pre: {preProTime}, Inf: {inferTime}, Post: {postProTime}"
     )
+
+    csvFileOut = modelFn + "_onnx" + ".csv"
+    tensor_output_dir = os.path.join(tensor_output_dir, csvFileOut)
+    np.savetxt(tensor_output_dir, timeBenchmarkArr, delimiter=",")
+    print(f"Finish exporting result to file {csvFileOut}.")
+
+    # REMOVING TENSORRT FILE
+    trtFile = os.path.join(modelDir,modelFn + ".trt")
+    os.remove(trtFile)
+
+    # CONSIDER ADD CACHE FOR TENSORRT ??
+    # if cachedEnable:
+    #     logger.info("Cache enabled. Sleeping for 10 mins...")
+    #     t.sleep(timeSleep)
