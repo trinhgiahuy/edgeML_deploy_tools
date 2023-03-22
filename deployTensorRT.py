@@ -969,7 +969,7 @@ if __name__ == "__main__":
         logger.info(f"Creating directory {tensor_output_dir}")
 
     
-    tensor_engine = getEngine(modelName=modelFn, application=application)
+    tensor_engine = getEngine(modelName=modelFn, application=application,device=device)
     # getTensorRTEngine(modelOnnxPathName=modelOnnxPathName)
     
     isImgClassApplication = False
