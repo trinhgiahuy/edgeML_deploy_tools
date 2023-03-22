@@ -789,7 +789,7 @@ class BoundingBox:
         label=None,
         label_color=Color(0, 0, 0),
         label_background_color=Color(255, 255, 255),
-        label_font_size=1,
+        label_font_size=0.5,
         label_transparency=0,
     ):
         # convention: x corresponds to width, y corresponds to height
