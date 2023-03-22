@@ -400,6 +400,75 @@ objDetModelsCfg = {
             "class_names": COCO_CATEGORY_NAMES,
         },
     },
+    
+    
+   'yolov5n': {
+        "preprocessing": {
+            "pytorch_src": True,
+            "new_height":640,
+            "new_width":640
+        },
+        "postprocessing": {
+            "score_thresh": 0.5,
+        }
+    },
+
+    'yolov5s': {
+        "preprocessing": {
+            "pytorch_src": True,
+            "new_height":640,
+            "new_width":640
+        },
+        "postprocessing": {
+            "score_thresh": 0.5,
+        }
+    },
+
+    'yolov5m': {
+        "preprocessing": {
+            "pytorch_src": True,
+            "new_height":640,
+            "new_width":640
+        },
+        "postprocessing": {
+            "score_thresh": 0.5,
+        }
+    },
+
+    'yolov5n6': {
+        "preprocessing": {
+            "pytorch_src": True,
+            "new_height":1280,
+            "new_width":1280
+        },
+        "postprocessing": {
+            "score_thresh": 0.5,
+        }
+    },
+
+    
+    'yolov5s6': {
+        "preprocessing": {
+            "pytorch_src": True,
+            "new_height":1280,
+            "new_width":1280
+        },
+        "postprocessing": {
+            "score_thresh": 0.5,
+        }
+    },
+
+    
+    'yolov5m6': {
+        "preprocessing": {
+            "pytorch_src": True,
+            "new_height":1280,
+            "new_width":1280
+        },
+        "postprocessing": {
+            "score_thresh": 0.5,
+        }
+    },
 }
 
 humanPoseModelsCfg = {

@@ -641,8 +641,18 @@ def buildTensorRTEngine(modelOnnxPathName):
 
 
 
-def downloadEngine(modelName:str,application:str):
-    engineURL = jetsonTensorLink[modelName]
+def downloadEngine(modelName:str,application:str,device:str):
+    
+    if device=="xavier":
+        engineURL = jetsonXavier_TensorLink[modelName]
+    elif device=="tx2":
+        engineURL = jetsonTX2_TensorLink[modelName]
+    elif device=="nano":
+        engineURL = jetsonNano_TensorLink[modelName]
+    else:
+        msg=("Unknown device, Please specify it to download engine")
+        raise RuntimeError(msg)
+    
     enginePath = f"{os.getcwd()}/{application}"
     if os.path.exists(enginePath):
         logger.warning("Application dir exist")
@@ -663,11 +673,11 @@ def downloadEngine(modelName:str,application:str):
 
 
 
-def getEngine(modelName:str, application:str):
+def getEngine(modelName:str, application:str, device:str):
 
     # The downloadEngine will check if engine exists,
     # TODO: If not exist, build engine ??
-    engineFile = downloadEngine(modelName=modelName,application=application)
+    engineFile = downloadEngine(modelName=modelName,application=application,device=device)
 
     # if not os.path.exists(engineFilePath):
     #     print(
@@ -916,6 +926,12 @@ if __name__ == "__main__":
         help="ML application (image_class,object_detect)",
     )
     parser.add_argument(
+        "--device",
+        type=str,
+        required=True,
+        help="xavier, tx2, nano"
+    )
+    parser.add_argument(
         "--prefix", type=str, required=True, help="Runtime prefix (onnx,openVINO,tvm)"
     )
     args = parser.parse_args()
@@ -923,7 +939,7 @@ if __name__ == "__main__":
     modelFn = args.modelFn
     application = args.application
     prefix = args.prefix
-
+    device = args.device
     cwd = os.getcwd()
 
     # Same directory with google drive

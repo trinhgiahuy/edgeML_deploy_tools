@@ -4,6 +4,9 @@
 numIteration=5000
 
 application=$1
+# device: xaiver, nano, tx2
+device=$2
+isBuild=$3
 prefix=trt
 isJetson=True
 
@@ -38,19 +41,20 @@ fi
 echo $arrModelList
 echo "Building engine for all models in ${application}"
 
-
-# Uncomment this if already have engine file in GG Drive
-# for modelName in $arrModelList
-# do
-#     modelFn="${modelName}"
-#     python buildEngine.py --application $application --modelFn $modelFn --prefix $prefix
-# done
-
-
-# Uncomment this if using above buiding block code
-for modelName in $arrModelList
-do
-    modelFn="${modelName}"
-    echo "Executing classifier tensorRT model ${modelFn}"
-    python deployTensorRT.py --prefix $prefix --application $application --modelFn $modelFn --numIteration $numIteration
-done
+echo isBuild
+if $isBuild;then
+    echo "================BUILDING TENSORRT ENGINE ..."
+    for modelName in $arrModelList
+    do
+        modelFn="${modelName}"
+        python buildEngine.py --application $application --modelFn $modelFn --prefix $prefix
+    done
+else
+    echo "================DOWNLOADING TENSORRT ENGINE ..."
+    for modelName in $arrModelList
+    do
+        modelFn="${modelName}"
+        echo "Executing classifier tensorRT model ${modelFn}"
+        python deployTensorRT.py --prefix $prefix --application $application --device $device --modelFn $modelFn --numIteration $numIteration
+    done
+fi

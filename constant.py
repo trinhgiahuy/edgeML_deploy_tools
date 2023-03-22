@@ -166,7 +166,7 @@ jetson36ModelLink={
 
 
 # This is link for engine
-jetsonTensorLink ={
+jetsonXavier_TensorLink ={
     "alexnet": "https://drive.google.com/u/2/uc?id=1OFzRXu-kQesCF1rYOqSwI9SMcAZ3mhdm",
     "googlenet": "https://drive.google.com/u/2/uc?id=1GoANBNnWDtEnJiALxKJ01rUGn2uLbBCJ",
     "efficientnet_b0": "https://drive.google.com/u/2/uc?id=1pbSoPljm46ZWQbsbUdnGV67lPRcGUHTA",
@@ -183,7 +183,41 @@ jetsonTensorLink ={
     "mnasnet1_3" : "https://drive.google.com/u/2/uc?id=1aHAEj3XMEfGtvjidde-WTvlRA60u3XCJ",
     "resnet18" : "https://drive.google.com/u/2/uc?id=1FDvR6GrKxlJ7wxd3WIJVqRxge166u5M4",
 }
+jetsonTX2_TensorLink={
+    "alexnet": "https://drive.google.com/u/2/uc?id=1y0moPVxRmQ_c-Mvguxy-NACgWe9RWe7d",
+    "googlenet": "https://drive.google.com/u/2/uc?id=1eUvoUBQVmYBaX98Pud4KqyiZ7_HeTrg_",
+    "efficientnet_b0" : "https://drive.google.com/u/2/uc?id=1EH8Cbwhw_ANHChefLek8TEOUynhfBvVD",
+    "densenet121" : "https://drive.google.com/u/2/uc?id=1GscwPOe5Y4rAS_2_en8nal-2PUMAlseu",
+    "squeezenet1_0" : "https://drive.google.com/u/2/uc?id=1EoVJDA1VWFZPeCk9j25-dZuPVGdlEuHN",
+    "inception_v3" : "https://drive.google.com/u/2/uc?id=1142TfOacRTk4P8TupvdjKX04vxKvHP3H",
+    "shufflenet_v2_x0_5" : "https://drive.google.com/u/2/uc?id=1gp2BY4Yf_0FnE-ZFB55GNY4cu8gL-e08",
+    "mobilenet_v2" : "https://drive.google.com/u/2/uc?id=1oPxDb9FOn9g1LVx_bTdFN9PdOJxbIFWv",
+    "mobilenet_v3_small" : "https://drive.google.com/u/2/uc?id=1_TRxMecQskNUI-QY8h5k_lqPkKBpIAen",
+    "mobilenet_v3_large": "https://drive.google.com/u/2/uc?id=1AKVLaZiyi4sTN2myc5x0y180CFtd2eyU",
+    "mnasnet0_5" : "https://drive.google.com/u/2/uc?id=1jw2B0ekfo2wVSs5jZ5dN_htyU5kA6AOp",
+    "mnasnet0_75": "https://drive.google.com/u/2/uc?id=1pFYRg_2VuCdmUxBsAYtGGln2670mvyrr",
+    "mnasnet1_0": "https://drive.google.com/u/2/uc?id=1B_hAE6Or9amyacp7rs61XPY91yo2zfs5",
+    "mnasnet1_3": "https://drive.google.com/u/2/uc?id=1gTGjVtNCKJ72G56z7iZ5PTgabPfNe1Ep",
+    "resnet18": "https://drive.google.com/u/2/uc?id=1EEojOOVFpWwVV_fh7bDJSiyzBBv8Mwgo",
+}
 
+jetsonNano_TensorLink={
+    "alexnet": "",
+    "googlenet": "",
+    "efficientnet_b0" : "",
+    "densenet121" : "",
+    "squeezenet1_0" : "",
+    "inception_v3" : "",
+    "shufflenet_v2_x0_5" : "",
+    "mobilenet_v2" : "",
+    "mobilenet_v3_small" : "",
+    "mobilenet_v3_large": "",
+    "mnasnet0_5" : "",
+    "mnasnet0_75": "",
+    "mnasnet1_0": "",
+    "mnasnet1_3": "",
+    "resnet18": "",
+}
 execProvider = [
     ""
 ]
