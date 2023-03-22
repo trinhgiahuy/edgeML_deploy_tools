@@ -687,7 +687,7 @@ def getEngine(modelName:str, application:str, device:str):
         
     logger.info("Reading engine from file {}".format(engineFile))
     with open(engineFile, "rb") as f, trt.Runtime(TRT_LOGGER) as runtime:
-        return runtime.deserialize_cuda_engine(f.read())
+        return runtime.deserialize_cuda_engine(f.read()), engineFile
 
 
 
@@ -969,7 +969,7 @@ if __name__ == "__main__":
         logger.info(f"Creating directory {tensor_output_dir}")
 
     
-    tensor_engine = getEngine(modelName=modelFn, application=application,device=device)
+    tensor_engine, engineFile = getEngine(modelName=modelFn, application=application,device=device)
     # getTensorRTEngine(modelOnnxPathName=modelOnnxPathName)
     
     isImgClassApplication = False
@@ -1014,8 +1014,9 @@ if __name__ == "__main__":
     print(f"Finish exporting result to file {csvFileOut}.")
 
     # REMOVING TENSORRT FILE
-    trtFile = os.path.join(modelDir,modelFn + ".trt")
-    os.remove(trtFile)
+    # trtFile = os.path.join(modelDir,modelFn + ".trt")
+    logger.info("Removing engine file...")
+    os.remove(engineFile)
 
     # CONSIDER ADD CACHE FOR TENSORRT ??
     # if cachedEnable:
