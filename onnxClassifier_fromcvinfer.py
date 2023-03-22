@@ -927,6 +927,8 @@ if __name__ == "__main__":
             drawingFrameOut = onnx_model(cv2Img)
         elif isHumanPoseApplication:
             dumpOut = onnx_model(tempImg,cv2Img)
+        elif isSemanSegmenApplication:
+            dumpOut = onnx_model(tempImg)
         else:
             logger.warning("At least one application must be specified")
 
