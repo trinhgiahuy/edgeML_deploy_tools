@@ -78,7 +78,7 @@ modelLinkDrive = {
     # "retinanet_resnet50_fpn_v2": "https://drive.google.com/u/2/uc?id=1Zv3wTj8EbVMUGqRpjfNPOmRNAPXaIhdv",
     # "retinanet_resnet50_fpn": "https://drive.google.com/u/2/uc?id=1NEDQCGFQO5z2CmNbyNBx_wVSBjSM1LuO",
     "ssd300_vgg16": "https://drive.google.com/u/2/uc?id=1eoC_3tH_s0HbuMTJ-j2zEBr1uTTFe529",
-    "ssdlite320_mobilenet_v3_large": "https://drive.google.com/u/2/uc?id=14qxtYiZ6euKSYRgePFK4XI9UQAaopvCO",
+    "ssdlite320_mobilenet_v3_large": "https://drive.google.com/u/2/uc?id=1BYRG2D5Ugc0Y5OE_aj7OS4_UKjKb3a3Z",
     
     "tinyYOLOv2": "https://drive.google.com/u/2/uc?id=1viejka4pVIKRsHCsd3ljvkParN9DxQ8r",
     "tinyYOLOv3": "https://drive.google.com/u/2/uc?id=1-_c1V8s_vOjLO2D5ypg1W6kgiFPbvmwm",
