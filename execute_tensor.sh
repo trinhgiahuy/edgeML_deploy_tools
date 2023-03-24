@@ -41,7 +41,7 @@ fi
 echo $arrModelList
 echo "Building engine for all models in ${application}"
 
-echo isBuild
+echo isBuild $isBuild
 if $isBuild;then
     echo "================BUILDING TENSORRT ENGINE ..."
     for modelName in $arrModelList
