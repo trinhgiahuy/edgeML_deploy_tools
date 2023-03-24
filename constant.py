@@ -19,24 +19,24 @@ imageClassModelName = [
 ]
 
 objectDetectModelName = [
-    # "fasterrcnn_mobilenet_v3_large_320_fpn",
-    # "fasterrcnn_mobilenet_v3_large_fpn",
-    # "ssd300_vgg16",
-    "ssdlite320_mobilenet_v3_large",
+    "fasterrcnn_mobilenet_v3_large_320_fpn",
+    "fasterrcnn_mobilenet_v3_large_fpn",
+    "ssd300_vgg16",
+    # "ssdlite320_mobilenet_v3_large",
 ]
 
 customobjectDetectModelName = [
-    "tinyYOLOv2", 
+    # "tinyYOLOv2", 
     "tinyYOLOv3", 
-    'yolov5n',
-    'yolov5n6',
-    'yolov5s',
-    'yolov5s6',
+    #'yolov5n',
+    #'yolov5n6',
+    #'yolov5s',
+    #'yolov5s6',
 ]
 
 YOLOXObjectDetectOnnxModelName = [
-    'yolox_nano',
-    'yolox_tiny',
+#    'yolox_nano',
+#    'yolox_tiny',
     'yolox_s'
 ]
 
@@ -97,6 +97,7 @@ modelLinkDrive = {
     "lightweightHumanPose": "https://drive.google.com/u/2/uc?id=1G-RCf8A-tmM0yOMHG54cLP15g2Yvf6Dn",
 
     "lraspp_mobilenet_v3_large": "https://drive.google.com/u/2/uc?id=1WkA1U-VECVqgoIZrfbSIWE89CD0i7ELE"
+
 }
 
 # JetsonNanoLinkDrive = {
@@ -123,9 +124,9 @@ JetsonTX2LinkDrive={
     "mnasnet1_3":"https://drive.google.com/uc?id=1hi_ixPsa7vXhbQE_vHfU8kyTrPxUUC_q",
     "resnet18":"https://drive.google.com/u/2/uc?id=1llezqtYeDA7kVew3hJyHY8RVhdBKIuks",
 
-    "fasterrcnn_mobilenet_v3_large_fpn":"",
-    "fasterrcnn_mobilenet_v3_large_320_fpn":"",
-    "ssd300_vgg16":"",
+    "fasterrcnn_mobilenet_v3_large_fpn":"https://drive.google.com/u/2/uc?id=1d2n7fhwrkUF12Xx3ptZHdxBOLevruWfl",
+    "fasterrcnn_mobilenet_v3_large_320_fpn":"https://drive.google.com/u/2/uc?id=1IF9B5nM3Mm4algU5a8kDorurqZESEUuY",
+    "ssd300_vgg16":"https://drive.google.com/u/2/uc?id=16JX_C6q-yxQmKOQ3tY1sbfjuaeh2wCFS",
     "ssdlite320_mobilenet_v3_large":"https://drive.google.com/u/2/uc?id=1lOweARggMEJyyLvyPzarLerX6ot3B1_c",
 
     "tinyYOLOv2": "https://drive.google.com/u/2/uc?id=1cdkVpZl8K56gIz12Y15_icPQ0hufd3_Y",
@@ -162,6 +163,11 @@ jetson36ModelLink={
     "mnasnet1_0" : "https://drive.google.com/u/2/uc?id=1J5l3CgJnIbYTVwOi49Fej_EVrvkNFukT",
     "mnasnet1_3" : "https://drive.google.com/u/2/uc?id=1doxlugWfNd0z5zIfqeYaK72L8cVI-zd7",
     "resnet18" : "https://drive.google.com/u/2/uc?id=1LAYTZc0aojYSlifYW6hHtwlL_J5R82Tb",
+
+    "yolov5n":"https://drive.google.com/u/2/uc?id=1fKJiuWN2Ch3j1EzBdcI5P-4Y8VaaylTW",
+    "yolov5n6": "",
+    "yolov5s": "",    
+    "yolov5s6": ""
 }
 
 

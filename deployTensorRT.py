@@ -196,6 +196,7 @@ class BoundingBox:
             + "label_font_size={})".format(self.label_font_size())
         )
 
+
 class Frame:
     """
     abstraction class for an image (or video frame)
@@ -590,7 +591,6 @@ class Frame:
             return Frame(new_frame_data, hwc)
 
 
-
 def buildTensorRTEngine(modelOnnxPathName):
     
     if not os.path.exists(modelOnnxPathName):
@@ -640,7 +640,6 @@ def buildTensorRTEngine(modelOnnxPathName):
             f.write(plan)
 
 
-
 def downloadEngine(modelName:str,application:str,device:str):
     
     if device=="xavier":
@@ -670,7 +669,6 @@ def downloadEngine(modelName:str,application:str,device:str):
     logger.info(f"Finish downloading engine file model {modelName}")
 
     return engineFile
-
 
 
 def getEngine(modelName:str, application:str, device:str):
@@ -810,7 +808,7 @@ class ImgClassTensorRTModel:
         return score
 
 
-
+## TODO: IMPLEMENT THIS
 class ObjectDetectTensorRTModel:
     """
     base implementation of tensorrt inference model
@@ -906,6 +904,7 @@ class ObjectDetectTensorRTModel:
 
         # Just return dump core
         return score
+
 
 
 
@@ -1016,7 +1015,7 @@ if __name__ == "__main__":
     # REMOVING TENSORRT FILE
     # trtFile = os.path.join(modelDir,modelFn + ".trt")
     logger.info("Removing engine file...")
-    os.remove(engineFile)
+    os.remove(engineFile)   
 
     # CONSIDER ADD CACHE FOR TENSORRT ??
     # if cachedEnable:

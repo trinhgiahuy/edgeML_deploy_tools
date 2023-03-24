@@ -469,6 +469,57 @@ objDetModelsCfg = {
             "score_thresh": 0.5,
         }
     },
+
+    'yolox_nano':{
+        "preprocessing": {
+            "custom": True, 
+            "new_height":416,
+            "new_width":416,
+            "keep_ratio": True,
+            "pad_constant": 114,
+            "interpolation": "linear",
+        },
+        "postprocessing": {
+            "confidence_threshold":0.5,
+            "nonmaximum_suppression_threshold": 0.5,
+            "strides": [8, 16, 32],
+            'class_names':COCO_CATEGORY_NAMES
+        }
+    },
+
+    'yolox_tiny':{
+        "preprocessing": {
+            "custom": True, 
+            "new_height":416,
+            "new_width":416,
+            "keep_ratio": True,
+            "pad_constant": 114,
+            "interpolation": "linear",
+        },
+        "postprocessing": {
+            "confidence_threshold":0.5,
+            "nonmaximum_suppression_threshold": 0.5,
+            "strides": [8, 16, 32],
+            'class_names':COCO_CATEGORY_NAMES
+        }
+    },
+
+    'yolox_s':{
+        "preprocessing": {
+            "custom": True, 
+            "new_height": 640,
+            "new_width": 640,
+            "keep_ratio": True,
+            "pad_constant": 114,
+            "interpolation": "linear",
+        },
+        "postprocessing": {
+            "confidence_threshold":0.5,
+            "nonmaximum_suppression_threshold": 0.5,
+            "strides": [8, 16, 32],
+            'class_names':COCO_CATEGORY_NAMES
+        }
+    },
 }
 
 humanPoseModelsCfg = {
@@ -512,7 +563,10 @@ customOnnxModel = {
     "tinyYOLOv2" : "/home/user/Downloads/tinyYOLOv2.onnx",
 
     #https://github.com/onnx/models/tree/main/vision/object_detection_segmentation/tiny-yolov3
-    "tinyYOLOv3" : "/home/user/Downloads/tinyYOLOv3.onnx",    
+    # "tinyYOLOv3" : "/home/user/Downloads/tinyYOLOv3_int32.onnx",    
+
+    # FOR TENSORRT, use int32 instead of 64, thus using below   
+    "tinyYOLOv3" : "/home/user/Downloads/int32/tinyYOLOv3.onnx",
 
     #https://github.com/TheYoungBeast/YoloV4-Tiny-ONNX
     # "tinyYOLOv4" : "/home/user/Downloads/yolov4-tiny-single-batch.onnx"
