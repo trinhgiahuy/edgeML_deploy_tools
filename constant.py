@@ -164,10 +164,19 @@ jetson36ModelLink={
     "mnasnet1_3" : "https://drive.google.com/u/2/uc?id=1doxlugWfNd0z5zIfqeYaK72L8cVI-zd7",
     "resnet18" : "https://drive.google.com/u/2/uc?id=1LAYTZc0aojYSlifYW6hHtwlL_J5R82Tb",
 
-    "yolov5n":"https://drive.google.com/u/2/uc?id=1fKJiuWN2Ch3j1EzBdcI5P-4Y8VaaylTW",
+    # ==============================THESE CUSTOM ONNX MODELS DO NOT WORK
+    "tinyYOLOv2":"https://drive.google.com/u/2/uc?id=1sHU9LESyrjh4iTxjHBKTGsZj9fMlyHtb",
+    "tinyYOLOv3":"https://drive.google.com/u/2/uc?id=1TR5PPaUpcn-VSKRay6wEiPkP-dEkQAqe",
+
+    "yolov5n": "https://drive.google.com/u/2/uc?id=1VtL_bbWVkufArkdh5HWyjSadvjwql9MG",
     "yolov5n6": "",
-    "yolov5s": "",    
-    "yolov5s6": ""
+    "yolov5s": "",
+    "yolov5s6": "",
+
+    "yolox_s":"https://drive.google.com/u/2/uc?id=1AqR-o9OZjQWmuOZZkVkWVnYVaC1DSoPx",
+    # ==============================T
+
+    "lraspp_mobilenet_v3_large": "https://drive.google.com/u/2/uc?id=1rrloDSzV516mIJdT1ZiSntkbSYwRcSYH"
 }
 
 
@@ -205,6 +214,13 @@ jetsonTX2_TensorLink={
     "mnasnet1_0": "https://drive.google.com/u/2/uc?id=1B_hAE6Or9amyacp7rs61XPY91yo2zfs5",
     "mnasnet1_3": "https://drive.google.com/u/2/uc?id=1gTGjVtNCKJ72G56z7iZ5PTgabPfNe1Ep",
     "resnet18": "https://drive.google.com/u/2/uc?id=1EEojOOVFpWwVV_fh7bDJSiyzBBv8Mwgo",
+
+    
+    "yolov5n": "https://drive.google.com/u/2/uc?id=1bZPtXWik05aVJ3V5lQ3iRdqGXA2exxDM",
+
+    # "yolox_s": "https://drive.google.com/u/2/uc?id=12Y1aiA_FQYzpwI0w0iLeTzZ_LTr6im9n"
+    "yolox_s":"",
+    "lraspp_mobilenet_v3_large":"https://drive.google.com/u/2/uc?id=1cWzcx2aYX16FIvvC_1x0NUfmQlWLG2t8"
 }
 
 jetsonNano_TensorLink={

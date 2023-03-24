@@ -16,7 +16,7 @@ from drawline import draw_rect
 import math
 from operator import itemgetter
 from skimage.io import imsave
-import onnx
+# import onnx
 
 from common_cvinfer import *
 YOLOV5_MODEL_LIST=['yolov5n','yolov5n6','yolov5s','yolov5s6','yolov5m','yolov5m6']
@@ -893,7 +893,7 @@ if __name__ == "__main__":
             elif isYOLOXRunning:
                 drawingFrameOut = onnx_model(cv2Img)
             elif isHumanPoseApplication:
-                dumpOut = onnx_model(tempImg,cv2Img)    
+                dumpOut = onnx_model(tempImg,cv2Img)
             elif isSemanSegmenApplication:
                 dumpOut = onnx_model(tempImg)
 

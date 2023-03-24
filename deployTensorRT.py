@@ -41,7 +41,8 @@ TRT_LOGGER = trt.Logger()
 EXPLICIT_BATCH = 1 << (int)(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)
 
 execProvider = "CPUExecutionProvider"
-
+YOLOV5_MODEL_LIST=['yolov5n','yolov5n6','yolov5s','yolov5s6','yolov5m','yolov5m6']
+YOLOX_MODEL_LIST=['yolox_nano','yolox_tiny','yolox_s','yolox_x']
 
 
 class Point:
@@ -652,7 +653,7 @@ def downloadEngine(modelName:str,application:str,device:str):
         msg=("Unknown device, Please specify it to download engine")
         raise RuntimeError(msg)
     
-    enginePath = f"{os.getcwd()}/{application}"
+    enginePath = f"{os.getcwd()}/{application}_trt"
     if os.path.exists(enginePath):
         logger.warning("Application dir exist")
     else:
@@ -807,7 +808,6 @@ class ImgClassTensorRTModel:
         # Just return dump core
         return score
 
-
 ## TODO: IMPLEMENT THIS
 class ObjectDetectTensorRTModel:
     """
@@ -906,6 +906,365 @@ class ObjectDetectTensorRTModel:
         return score
 
 
+class customObjectDetectTensorRTModel:
+    def __init__(self, onnx_path, tensor_engine,num_class: int = 100):
+        # Load time recorder
+        self.preProcessTime = 0.0
+        self.inferenceTime = 0.0
+        self.postProcessTime = 0.0
+        self.engineTime = 0.0
+
+        # TensorRT variable
+        self.stream = None
+        self.num_class = num_class
+        self.engine = None
+        self.context = None
+        self.target_dtype = np.float32 
+
+        # load preprocessing function
+        preprocess_file = onnx_path.replace(".onnx", ".preprocess")
+        assert os.path.exists(preprocess_file)
+        with open(preprocess_file, "rb") as fid:
+            self.preprocess_function = dill.load(fid)
+
+        postprocess_file = onnx_path.replace(".onnx", ".postprocess")
+        assert os.path.exists(postprocess_file)
+        with open(postprocess_file, "rb") as fid:
+            self.postprocess_function = dill.load(fid)
+
+        config_file = onnx_path.replace(".onnx", ".configuration.json")
+        assert os.path.exists(config_file)
+        with open(config_file, "r") as fid:
+            # self.config is a dictionary
+            self.config = json.loads(fid.read())
+
+        engineFilePath = onnx_path.replace('.onnx','.trt')
+        self.engine = tensor_engine
+        self.context = self.engine.create_execution_context()
+       
+
+        modelName = onnx_path.split('/')[-1].split('.')[0]
+        self.modelName = modelName
+        logger.info(f"ModelName: {modelName}")
+        if modelName in YOLOV5_MODEL_LIST:
+            logger.info("1")
+            # Change device set accourding to execution provider
+            # if execution_provider == "CPUExecutionProvider":
+            #     deviceSet = "cpu"
+            # elif execution_provider == "CUDAExecutionProvider":
+            #     deviceSet = "gpu"
+            # else:
+            #     logger.warning("UNKNOWN EXEC PROVIDER")
+            deviceSet="auto"
+
+            # from cvu.detector.yolov5 import Yolov5 as Yolov5Onnx
+            # self.session = Yolov5Onnx(
+            #     classes="coco",
+            #     backend="onnx",
+            #     weight=onnx_path,
+            #     device=deviceSet
+            # )
+            self.isYOLOv5 = True
+        else:
+            # startLoadEngine = time()
+            # onnx_path = preprocess_file.replace(".preprocess", ".onnx")
+            # self.input_name = self.session.get_inputs()[0].name
+            self.isYOLOv5 = False
+
+
+            # UNCOMMENT THIS BLOCK FOR DEBUGGING
+            # print(onnx_path)
+            # self.onnx_model = onnx.load(onnx_path)
+            # onnx.checker.check_model(self.onnx_model)
+            # print(self.onnx_model.graph.input)
+            # for _input in self.onnx_model.graph.input:
+            #     dim = _input.type.tensor_type.shape.dim
+            #     print(dim)
+            #     onnxInputShape = [MessageToDict(d).get("dimValue") for d in dim]
+            #     print(onnxInputShape)
+            # onnxInputShape = onnxInputShape[-2:]
+            # logger.warning(onnxInputShape)
+
+    def allocate_memory(self, batch):
+
+        self.output = np.empty(self.num_class, dtype=self.target_dtype) # Need to set both input and output precisions to FP16 to fully enable FP16
+        # Allocate device memory
+        self.d_input = cuda.mem_alloc(1 * batch.nbytes)
+        self.d_output = cuda.mem_alloc(1 * self.output.nbytes)
+
+        self.bindings = [int(self.d_input), int(self.d_output)]
+
+        self.stream = cuda.Stream() 
+        
+    @logger.catch
+    def __call__(self, frame: Frame):
+        # input must be a frame
+        assert isinstance(frame, Frame)
+
+        # calling preprocess
+        start = time()
+        model_input, _, self.frameToDraw = self.preprocess_function(
+            frame, self.config["preprocessing"]
+        )
+        preProcessTime = time()
+        self.preProcessTime = preProcessTime - start
+
+       # compute ONNX Runtime output prediction
+        if self.isYOLOv5:
+            if self.stream is None:
+                self.allocate_memory(batch=model_input)
+            
+            # Transfer input data to device
+            cuda.memcpy_htod_async(self.d_input, model_input, self.stream)
+            # Execute model
+            self.context.execute_async_v2(self.bindings, self.stream.handle, None)
+            # Transfer predictions back
+            cuda.memcpy_dtoh_async(self.output, self.d_output, self.stream)
+            # Syncronize threads
+            self.stream.synchronize()
+            inferenceTime = time()
+            self.inferenceTime = inferenceTime - preProcessTime
+
+            drawingFrameData = self.postprocess_function(
+                self.output,self.frameToDraw, self.config["postprocessing"]
+            )
+            postProcessTime = time()
+            self.postProcessTime = postProcessTime - inferenceTime
+        else:
+            if self.modelName in ['tinyYOLOv3']:
+                
+                batchTmpSize = np.array([self.frameToDraw.shape()[1],self.frameToDraw.shape()[0]],dtype=np.float32).reshape(1,2)
+                input2_name = self.session.get_inputs()[1].name
+                model_output = self.session.run(None,{
+                    self.input_name : model_input, 
+                    input2_name: batchTmpSize
+                })
+                inferenceTime = time()
+                self.inferenceTime = inferenceTime - preProcessTime
+
+                # calling postprocess
+                drawingFrameData = self.postprocess_function(
+                    model_output, self.frameToDraw, self.config["postprocessing"]
+                )
+
+                # drawingFrameData = yolov3_ObjectDetectPostProcess(
+                #     model_output, self.frameToDraw, self.config["postprocessing"]
+                # )
+                postProcessTime = time()
+                self.postProcessTime = postProcessTime - inferenceTime
+            
+            else:
+                ort_inputs = {self.input_name: model_input}
+                # model_output here shape example (1,1,25,13,13)
+                model_output = self.session.run(None, ort_inputs)
+                inferenceTime = time()
+                self.inferenceTime = inferenceTime - preProcessTime
+
+                # calling postprocess
+                drawingFrameData = self.postprocess_function(
+                    model_output[0][0], self.frameToDraw, self.config["postprocessing"]
+                )
+                postProcessTime = time()
+                self.postProcessTime = postProcessTime - inferenceTime
+
+        return drawingFrameData
+
+
+class yoloxObjectDetectTensorRTModel:
+
+    def __init__(self,onnx_path, tensor_engine,num_class: int = 100):
+        
+        self.preProcessTime = 0.0
+        self.inferenceTime = 0.0
+        self.postProcessTime = 0.0
+        self.engineTime = 0.0
+
+        # TensorRT variable
+        self.stream = None
+        self.num_class = num_class
+        self.engine = None
+        self.context = None
+        self.target_dtype = np.float32 
+
+        # load preprocessing function
+        preprocess_file = onnx_path.replace(".onnx", ".preprocess")
+        assert os.path.exists(preprocess_file)
+        with open(preprocess_file, "rb") as fid:
+            self.preprocess_function = dill.load(fid)
+
+        # similarly, load postprocessing function
+        postprocess_file = onnx_path.replace(".onnx", ".postprocess")
+        assert os.path.exists(postprocess_file)
+        with open(postprocess_file, "rb") as fid:
+            self.postprocess_function = dill.load(fid)
+        
+        config_file = onnx_path.replace(".onnx", ".configuration.json")
+        assert os.path.exists(config_file)
+        with open(config_file, "r") as fid:
+            # self.config is a dictionary
+            self.config = json.loads(fid.read())
+
+        engineFilePath = onnx_path.replace('.onnx','.trt')
+        self.engine = tensor_engine
+        self.context = self.engine.create_execution_context()
+
+    def allocate_memory(self, batch):
+
+        self.output = np.empty(self.num_class, dtype=self.target_dtype) # Need to set both input and output precisions to FP16 to fully enable FP16
+        # Allocate device memory
+        self.d_input = cuda.mem_alloc(1 * batch.nbytes)
+        self.d_output = cuda.mem_alloc(1 * self.output.nbytes)
+
+        self.bindings = [int(self.d_input), int(self.d_output)]
+
+        self.stream = cuda.Stream()        
+
+    def __call__(self,frame: Frame):
+
+        # self.meta_data = {}
+        # height_after = self.config["preprocessing"]["new_height"]
+        # width_after = self.config["preprocessing"]["new_width"]
+
+        # self.meta_data['height_after'] = height_after
+        # self.meta_data['width_after'] = width_after
+
+        start = time()
+        model_input, meta_data = self.preprocess_function(
+            frame, self.config["preprocessing"]
+        )
+        preProcessTime = time()
+        self.preProcessTime = preProcessTime - start
+
+        if self.stream is None:
+            self.allocate_memory(batch=model_input)
+        
+        # Transfer input data to device
+        cuda.memcpy_htod_async(self.d_input, model_input, self.stream)
+        # Execute model
+        self.context.execute_async_v2(self.bindings, self.stream.handle, None)
+        # Transfer predictions back
+        cuda.memcpy_dtoh_async(self.output, self.d_output, self.stream)
+        # Syncronize threads
+        self.stream.synchronize()
+        inferenceTime = time()
+        self.inferenceTime = inferenceTime - preProcessTime
+
+        # if hasattr(self.output,"eval"):
+        #     logger.info("Calling model eval")
+        #     self.output.eval()
+
+        # logger.info(type(self.output))
+        # logger.info(np.shape(self.output))
+        # logger.info(self.output)
+
+        drawingFrameData = self.postprocess_function(
+            self.output, self.config["postprocessing"], meta_data
+        )
+        # categoryName, score = testImgClassObjPostProcess(
+        #     self.output, self.config["postprocessing"]
+        # )
+        # print(f"{categoryName} {score}")
+        postProcessTime = time()
+        self.postProcessTime = postProcessTime - inferenceTime
+
+        # Just return dump core
+        return drawingFrameData
+
+
+class SemanSegmenTensorRTModel:
+
+    def __init__(self,onnx_path, tensor_engine,num_class: int = 100):
+        
+        self.preProcessTime = 0.0
+        self.inferenceTime = 0.0
+        self.postProcessTime = 0.0
+        self.engineTime = 0.0
+
+        # TensorRT variable
+        self.stream = None
+        self.num_class = num_class
+        self.engine = None
+        self.context = None
+        self.target_dtype = np.float32 
+
+        # load preprocessing function
+        preprocess_file = onnx_path.replace(".onnx", ".preprocess")
+        assert os.path.exists(preprocess_file)
+        with open(preprocess_file, "rb") as fid:
+            self.preprocess_function = dill.load(fid)
+
+        # similarly, load postprocessing function
+        postprocess_file = onnx_path.replace(".onnx", ".postprocess")
+        assert os.path.exists(postprocess_file)
+        with open(postprocess_file, "rb") as fid:
+            self.postprocess_function = dill.load(fid)
+        
+        config_file = onnx_path.replace(".onnx", ".configuration.json")
+        assert os.path.exists(config_file)
+        with open(config_file, "r") as fid:
+            # self.config is a dictionary
+            self.config = json.loads(fid.read())
+
+        engineFilePath = onnx_path.replace('.onnx','.trt')
+        self.engine = tensor_engine
+        self.context = self.engine.create_execution_context()
+
+    def allocate_memory(self, batch):
+
+        self.output = np.empty(self.num_class, dtype=self.target_dtype) # Need to set both input and output precisions to FP16 to fully enable FP16
+        # Allocate device memory
+        self.d_input = cuda.mem_alloc(1 * batch.nbytes)
+        self.d_output = cuda.mem_alloc(1 * self.output.nbytes)
+
+        self.bindings = [int(self.d_input), int(self.d_output)]
+
+        self.stream = cuda.Stream()        
+
+    def __call__(self,frame: Frame):
+
+        assert isinstance(frame, Frame)
+        start = time()
+        model_input, meta_data = self.preprocess_function(
+            frame, self.config["preprocessing"]
+        )
+        preProcessTime = time()
+        self.preProcessTime = preProcessTime - start
+
+        if self.stream is None:
+            self.allocate_memory(batch=model_input)
+        
+        logger.info(self.context)
+        # Transfer input data to device
+        cuda.memcpy_htod_async(self.d_input, model_input, self.stream)
+        # Execute model
+        self.context.execute_async_v2(self.bindings, self.stream.handle, None)
+        # Transfer predictions back
+        cuda.memcpy_dtoh_async(self.output, self.d_output, self.stream)
+        # Syncronize threads
+        self.stream.synchronize()
+        inferenceTime = time()
+        self.inferenceTime = inferenceTime - preProcessTime
+
+        # if hasattr(self.output,"eval"):
+        #     logger.info("Calling model eval")
+        #     self.output.eval()
+
+        # logger.info(type(self.output))
+        # logger.info(np.shape(self.output))
+        # logger.info(self.output)
+
+        dumpOut = self.postprocess_function(
+            self.output, self.config["postprocessing"]
+        )
+        # categoryName, score = testImgClassObjPostProcess(
+        #     self.output, self.config["postprocessing"]
+        # )
+        # print(f"{categoryName} {score}")
+        postProcessTime = time()
+        self.postProcessTime = postProcessTime - inferenceTime
+
+        return dumpOut
+
 
 
 
@@ -972,10 +1331,46 @@ if __name__ == "__main__":
     # getTensorRTEngine(modelOnnxPathName=modelOnnxPathName)
     
     isImgClassApplication = False
+    isObjDetectApplication = False
+    isYOLOXRunning = False
+    isHumanPoseApplication = False
+    isSemanSegmen = False
 
     if application == "image_class":
         tensorRTModel = ImgClassTensorRTModel(onnx_path=modelOnnxPathName,tensor_engine=tensor_engine)
         isImgClassApplication = True
+
+    elif application == "object_detect":
+        tensorRTModel = ObjectDetectTensorRTModel(onnx_path=modelOnnxPathName,tensor_engine=tensor_engine)
+        isObjDetectApplication = True
+
+    elif application == "object_detect_custom":
+        logger.warning(modelOnnxPathName)
+        tensorRTModel = customObjectDetectTensorRTModel(onnx_path=modelOnnxPathName,tensor_engine=tensor_engine)
+        print(tensorRTModel)
+        isObjDetectApplication = True
+
+    elif application == "object_detect_yolox":
+        logger.info(tensor_engine)
+        tensorRTModel = yoloxObjectDetectTensorRTModel(onnx_path=modelOnnxPathName,tensor_engine=tensor_engine)
+        isYOLOXRunning = True
+
+    elif application == "human_pose":
+        logger.warning(modelOnnxPathName)
+        tensorRTModel = HumanPoseTensorRTModel(onnx_path=modelOnnxPathName,tensor_engine=tensor_engine)
+        isHumanPoseApplication = True
+
+    elif application == "seman_segmen":
+        tensorRTModel = SemanSegmenTensorRTModel(onnx_path=modelOnnxPathName,tensor_engine=tensor_engine)
+        isSemanSegmenApplication = True
+
+    if isObjDetectApplication:
+        drawingResultDir = f"{cwd}/drawingRes/{modelFn}"
+        if not os.path.exists(drawingResultDir):
+            logger.warning(
+                f"Creating drawing object detection directory {drawingResultDir}..."
+            )
+            os.mkdir(drawingResultDir)
 
     timeBenchmarkList = []
     for i in tqdm(range(numIteration)):
@@ -984,8 +1379,22 @@ if __name__ == "__main__":
         tempImg = Frame(imgIdx) 
         cv2Img = cv2.imread(imgIdx)
 
+        assert isImgClassApplication is True \
+        or isObjDetectApplication is True \
+        or isYOLOXRunning is True \
+        or isHumanPoseApplication is True \
+        or isSemanSegmenApplication is True
+
         if isImgClassApplication:
             dump = tensorRTModel(tempImg)
+        elif isObjDetectApplication:
+            drawingFrameOut = tensorRTModel(tempImg)
+        elif isYOLOXRunning:
+            drawingFrameOut = tensorRTModel(cv2Img)
+        elif isSemanSegmenApplication:
+            dumpOut = tensorRTModel(tempImg)
+        else:
+            logger.warning("At least one application must be specified")
 
         preProcessTime, inferenceTime, postProcessTime = (
             tensorRTModel.preProcessTime,
