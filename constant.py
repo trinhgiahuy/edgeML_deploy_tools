@@ -22,7 +22,7 @@ objectDetectModelName = [
     "fasterrcnn_mobilenet_v3_large_320_fpn",
     "fasterrcnn_mobilenet_v3_large_fpn",
     "ssd300_vgg16",
-    # "ssdlite320_mobilenet_v3_large",
+    "ssdlite320_mobilenet_v3_large",
 ]
 
 customobjectDetectModelName = [
@@ -124,10 +124,11 @@ JetsonTX2LinkDrive={
     "mnasnet1_3":"https://drive.google.com/uc?id=1hi_ixPsa7vXhbQE_vHfU8kyTrPxUUC_q",
     "resnet18":"https://drive.google.com/u/2/uc?id=1llezqtYeDA7kVew3hJyHY8RVhdBKIuks",
 
-    "fasterrcnn_mobilenet_v3_large_fpn":"https://drive.google.com/u/2/uc?id=1d2n7fhwrkUF12Xx3ptZHdxBOLevruWfl",
-    "fasterrcnn_mobilenet_v3_large_320_fpn":"https://drive.google.com/u/2/uc?id=1IF9B5nM3Mm4algU5a8kDorurqZESEUuY",
-    "ssd300_vgg16":"https://drive.google.com/u/2/uc?id=16JX_C6q-yxQmKOQ3tY1sbfjuaeh2wCFS",
-    "ssdlite320_mobilenet_v3_large":"https://drive.google.com/u/2/uc?id=1lOweARggMEJyyLvyPzarLerX6ot3B1_c",
+    "fasterrcnn_mobilenet_v3_large_fpn":"https://drive.google.com/u/2/uc?id=1bNrmf_ah_-40I2nDvtT1LEINDXpVuBFJ",
+    "fasterrcnn_mobilenet_v3_large_320_fpn":"https://drive.google.com/u/2/uc?id=10KGWPnxE9IYfFvzZZQ1rl9dxcaCIOJX6",
+    "ssd300_vgg16":"https://drive.google.com/u/2/uc?id=105Czjc4GTD_haESdWhIEgmAXZZV57XG1",
+    "ssdlite320_mobilenet_v3_large":"https://drive.google.com/u/2/uc?id=1Qe8hWaNuxl8kZ78-RB8oKiWxkbFOW9yf",
+
 
     "tinyYOLOv2": "https://drive.google.com/u/2/uc?id=1cdkVpZl8K56gIz12Y15_icPQ0hufd3_Y",
     "tinyYOLOv3":"https://drive.google.com/u/2/uc?id=1NsAujinS-It1plRg5OtOcHQBFfXrLWoW",
@@ -215,7 +216,7 @@ jetsonTX2_TensorLink={
     "mnasnet1_3": "https://drive.google.com/u/2/uc?id=1gTGjVtNCKJ72G56z7iZ5PTgabPfNe1Ep",
     "resnet18": "https://drive.google.com/u/2/uc?id=1EEojOOVFpWwVV_fh7bDJSiyzBBv8Mwgo",
 
-    
+
     "yolov5n": "https://drive.google.com/u/2/uc?id=1bZPtXWik05aVJ3V5lQ3iRdqGXA2exxDM",
 
     # "yolox_s": "https://drive.google.com/u/2/uc?id=12Y1aiA_FQYzpwI0w0iLeTzZ_LTr6im9n"
