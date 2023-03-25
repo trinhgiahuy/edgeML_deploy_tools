@@ -5,10 +5,10 @@ COCODriveLink = "https://drive.google.com/u/2/uc?id=1gE5C1UXcCyogZU3K95tn-bXfuF8
 if enablelargeModel:
     imageClassModelName = [
         "resnet50",
-        # "resnet101",
-        # "resnet152",
-        # "resnext50_32x4d",
-        # "resnext101_32x8d",
+        "resnet101",
+        "resnet152",
+        "resnext50_32x4d",
+        "resnext101_32x8d",
     ]
 else:
     imageClassModelName = [
@@ -122,10 +122,10 @@ JetsonTX2LinkDrive={
 
     ## ================================== LARGE MODEL TESTING
     "resnet50": "https://drive.google.com/u/2/uc?id=1KWC9yp4YhsKEWFFB6jBcCdyDyFrADPRa",
-    "resnet101": "",
-    "resnet152": "",
-    "resnext50_32x4d" : "",
-    "resnext101_32x8d" : "",
+    "resnet101": "https://drive.google.com/u/2/uc?id=1fDB6cZbYubRGw4CBSKi5JjtjSE-5rRpB",
+    "resnet152": "https://drive.google.com/u/2/uc?id=1vb-P7lAsMkCnY9FHSFgeuccQBCEB-qE9",
+    "resnext50_32x4d" : "https://drive.google.com/u/2/uc?id=1YWAPZDjG7zriHH7i6xYFbj-E9bA5Qsle",
+    "resnext101_32x8d" : "https://drive.google.com/u/2/uc?id=1ZvDQR5tfYuiJ0mupXpGpx1MdcNm9qikj",
     ##================================== 
     "alexnet":"https://drive.google.com/u/2/uc?id=1EQ4EUmzO_z-btbYL8WoanHTjsdfoW-7N",
     "googlenet":"https://drive.google.com/u/2/uc?id=1siJe1hsl5tb3DlILG0ayBLirmFfM0EZc",
