@@ -1,22 +1,33 @@
+enablelargeModel = 1
+
 COCODriveLink = "https://drive.google.com/u/2/uc?id=1gE5C1UXcCyogZU3K95tn-bXfuF8a-8h4"
 
-imageClassModelName = [
-    "alexnet",
-    "googlenet",
-    "efficientnet_b0",
-    "densenet121",
-    "squeezenet1_0",
-    "inception_v3",
-    "shufflenet_v2_x0_5",
-    "mobilenet_v2",
-    "mobilenet_v3_small",
-    "mobilenet_v3_large",
-    "mnasnet0_5",
-    "mnasnet0_75",
-    "mnasnet1_0",
-    "mnasnet1_3",
-    "resnet18",
-]
+if enablelargeModel:
+    imageClassModelName = [
+        "resnet50",
+        "resnet101",
+        "resnet152",
+        "resnext50_32x4d",
+        "resnext101_32x8d",
+    ]
+else:
+    imageClassModelName = [
+        "alexnet",
+        "googlenet",
+        "efficientnet_b0",
+        "densenet121",
+        "squeezenet1_0",
+        "inception_v3",
+        "shufflenet_v2_x0_5",
+        "mobilenet_v2",
+        "mobilenet_v3_small",
+        "mobilenet_v3_large",
+        "mnasnet0_5",
+        "mnasnet0_75",
+        "mnasnet1_0",
+        "mnasnet1_3",
+        "resnet18",
+    ]
 
 objectDetectModelName = [
     "fasterrcnn_mobilenet_v3_large_320_fpn",
@@ -108,6 +119,14 @@ modelLinkDrive = {
 # }
 
 JetsonTX2LinkDrive={
+
+    ## ================================== LARGE MODEL TESTING
+    "resnet50": "https://drive.google.com/u/2/uc?id=145vJxeYzQHz-2HP3B55zLH4q3ADhUvzz",
+    "resnet101": "https://drive.google.com/u/2/uc?id=1sMXrCy0VGnV7nzdCNkilA6qSrWfOKbri",
+    "resnet152": "https://drive.google.com/u/2/uc?id=1DigxYvSaUpx-SVrlHI8DFp7NYAhJmvPN",
+    "resnext50_32x4d" : "https://drive.google.com/u/2/uc?id=1VHHOdGtRS-Bd0nUmP7IY0oUyOPJTrxMg",
+    "resnext101_32x8d" : "https://drive.google.com/u/2/uc?id=1zEioUPd0b9XSXgX5dWbLisWEBPlj7qP2",
+    ##================================== 
     "alexnet":"https://drive.google.com/u/2/uc?id=1EQ4EUmzO_z-btbYL8WoanHTjsdfoW-7N",
     "googlenet":"https://drive.google.com/u/2/uc?id=1siJe1hsl5tb3DlILG0ayBLirmFfM0EZc",
     "efficientnet_b0":"https://drive.google.com/uc?id=1TscfrRJJ1UfNeQNTVB8PuDc9n1VWEtkk",
