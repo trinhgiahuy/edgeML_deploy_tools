@@ -16,6 +16,7 @@ from drawline import draw_rect
 import math
 from operator import itemgetter
 from skimage.io import imsave
+import matplotlib.pyplot as plt
 # import onnx
 
 from common_cvinfer import *

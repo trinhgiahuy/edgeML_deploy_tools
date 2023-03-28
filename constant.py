@@ -107,7 +107,7 @@ modelLinkDrive = {
 
     "lightweightHumanPose": "https://drive.google.com/u/2/uc?id=1G-RCf8A-tmM0yOMHG54cLP15g2Yvf6Dn",
 
-    "lraspp_mobilenet_v3_large": "https://drive.google.com/u/2/uc?id=1G-RCf8A-tmM0yOMHG54cLP15g2Yvf6Dn"
+    "lraspp_mobilenet_v3_large": "https://drive.google.com/u/2/uc?id=1US24a_tMmSf5ELlkkxGF89PCpACZtFGv"
 
 }
 

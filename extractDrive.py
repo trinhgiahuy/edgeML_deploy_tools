@@ -5,6 +5,9 @@ from loguru import logger
 import gdown
 import argparse
 
+# Set False for Raspberry Pi, True for Jetson
+isJetson = False
+
 cwd = os.getcwd()
 COCODir = cwd + "/COCO_5000_imgs/"
 COCOExist = os.path.exists(COCODir)
@@ -131,7 +134,7 @@ if __name__ == "__main__":
 
     application = args.application
     prefix = args.prefix
-    isJetson = args.isJetson
+    # isJetson = args.isJetson
 
     if application == "image_class":
         for name in imageClassModelName:
