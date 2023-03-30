@@ -169,7 +169,7 @@ JetsonTX2LinkDrive={
     # "lightweightHumanPose": "https://drive.google.com/u/2/uc?id=16pv__Up2E2vGP13vxBN2NVUzIiZQOCOu",
     
     # Stride 32
-    "lightweightHumanPose": "",
+    "lightweightHumanPose": "https://drive.google.com/u/2/uc?id=1n9FtS8wbZ_7UllzCAw4qkI0gWHdE-_fB",
     "lraspp_mobilenet_v3_large":"https://drive.google.com/u/2/uc?id=1U6rZ7X53KgFIyfVH1caECjfFyGW5qtbr"
 }
 
