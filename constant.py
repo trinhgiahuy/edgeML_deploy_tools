@@ -9,6 +9,7 @@ if enablelargeModel:
         "resnet152",
         "resnext50_32x4d",
         "resnext101_32x8d",
+        # "resnext101_64x4d"
     ]
 else:
     imageClassModelName = [
@@ -105,8 +106,11 @@ modelLinkDrive = {
     "yolox_tiny": "https://drive.google.com/u/2/uc?id=1SLX-36DVvwPxAG7HkKWdZRoMU2hWpYJ5",
     "yolox_s" : "https://drive.google.com/u/2/uc?id=1UjYOqulLo8uMih7ViZhaMTfKBcT5w60K",
 
-    "lightweightHumanPose": "https://drive.google.com/u/2/uc?id=1G-RCf8A-tmM0yOMHG54cLP15g2Yvf6Dn",
+    # Stride 8
+    # "lightweightHumanPose": "https://drive.google.com/u/2/uc?id=1G-RCf8A-tmM0yOMHG54cLP15g2Yvf6Dn",
 
+    # Stride 32
+    "lightweightHumanPose": "https://drive.google.com/u/2/uc?id=1Vusix-2LqwRHFqeSMv2i8LkEmFqK-VgG",
     "lraspp_mobilenet_v3_large": "https://drive.google.com/u/2/uc?id=1US24a_tMmSf5ELlkkxGF89PCpACZtFGv"
 
 }
@@ -161,8 +165,11 @@ JetsonTX2LinkDrive={
     "yolox_tiny":"https://drive.google.com/u/2/uc?id=1aAE6l2BfGpgYSgwekmtX7Vpei9YtY1fy",
     "yolox_s":"https://drive.google.com/u/2/uc?id=1feOP-Y2JGNZt6Rd72fsS6cNMPffOQheE",
 
-    "lightweightHumanPose": "https://drive.google.com/u/2/uc?id=16pv__Up2E2vGP13vxBN2NVUzIiZQOCOu",
-
+    # Stride 8
+    # "lightweightHumanPose": "https://drive.google.com/u/2/uc?id=16pv__Up2E2vGP13vxBN2NVUzIiZQOCOu",
+    
+    # Stride 32
+    "lightweightHumanPose": "",
     "lraspp_mobilenet_v3_large":"https://drive.google.com/u/2/uc?id=1U6rZ7X53KgFIyfVH1caECjfFyGW5qtbr"
 }
 

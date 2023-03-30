@@ -529,7 +529,7 @@ humanPoseModelsCfg = {
             "resize_size": 256,
             "mean":[128,128,128],
             "scale":1/256,                   # In preprocess function, will take np.float32(1/256)
-            "stride":8,
+            "stride":32,
             
             #"cpu": True ???
         },
